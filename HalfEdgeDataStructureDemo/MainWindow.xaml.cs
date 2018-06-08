@@ -15,6 +15,12 @@ namespace HalfEdgeDataStructureDemo
         {
             InitializeComponent();
 
+            ///Test the HalfEdge Manipulations
+            /*var triMesh = HalfEdgeMeshGenerator.GenerateHalfEdgeTests();
+            ViewPort.Children.Add(triMesh.CreateMeshVisual3D(default(Color), default(Color)));
+            ViewPort.Children.Add(triMesh.CreateBoundaryVisual3D(default(Color)));*/
+
+            ///Demo Scene
             var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero(), 2, CubeSides.All);
             ViewPort.Children.Add(triMesh.CreateMeshVisual3D(default(Color), default(Color)));
             ViewPort.Children.Add(triMesh.CreateBoundaryVisual3D(default(Color)));
