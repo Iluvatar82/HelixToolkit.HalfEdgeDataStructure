@@ -2,13 +2,13 @@
 
 **HelixToolkit.HalfEdgeDataStructure is an Addon for the HelixToolkit that implements a HalfEdge - DataStructure**
 
-[**HalfEdgeDataStructure:**](https://github.com/helix-toolkit/iluvatar82/tree/develop/Source/HalfEdgeDataStructure) 
+[**HalfEdgeDataStructure:**](https://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure/tree/master/HalfEdgeDataStructure) 
 Components that form the Structure of the HalfEdge implementation.
 
-[**HalfEdgeDataStructureDemo:**](https://github.com/helix-toolkit/helix-toolkit/tree/develop/Source/HalfEdgeDataStructureDemo) 
+[**HalfEdgeDataStructureDemo:**](https://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure/tree/master/HalfEdgeDataStructureDemo) 
 Demo Project to show the Functionality of the HalfEdge - DataStructure. Uses the [HelixToolkit](https://github.com/helix-toolkit/helix-toolkit/helix-toolkit) for rendering.
 
-[**Helper:**](https://github.com/helix-toolkit/helix-toolkit/tree/develop/Source/Helper) 
+[**Helper:**](https://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure/tree/master/Helper) 
 Support Classes used to generate Geometry and to extend existing Classes to make Life easier.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/xm52c8c6es4gvv29?svg=true)](https://ci.appveyor.com/project/Iluvatar82/HelixToolkit-HalfEdgeDataStructure)
@@ -19,9 +19,9 @@ License             | The MIT License (MIT)
 Web page            | https://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure
 Documentation       | tba
 Source repository   | https://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure
-Latest build        | http://ci.appveyor.com/Iluvatar82/HelixToolkit-HalfEdgeDataStructure
+Latest build        | https://ci.appveyor.com/project/Iluvatar82/helixtoolkit-halfedgedatastructure
 Issue tracker       | http://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure/issues
-NuGet packages      | http://www.nuget.org/packages?q=HelixToolkit
+NuGet packages      | http://www.nuget.org/packages?q=HelixToolkit.HalfEdgeDataStructure
 
 ## News
 
