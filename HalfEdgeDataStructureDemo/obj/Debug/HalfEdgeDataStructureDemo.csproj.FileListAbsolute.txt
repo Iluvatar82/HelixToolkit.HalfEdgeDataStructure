@@ -15,7 +15,6 @@ D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\MainWindow.g.cs
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\App.g.cs
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\HalfEdgeDataStructureDemo_MarkupCompile.cache
-D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\HalfEdgeDataStructureDemo_MarkupCompile.lref
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\MainWindow.baml
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\HalfEdgeDataStructureDemo.g.resources
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\HalfEdgeDataStructureDemo.Properties.Resources.resources
