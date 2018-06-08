@@ -21,7 +21,6 @@ Documentation       | tba
 Source repository   | https://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure
 Latest build        | https://ci.appveyor.com/project/Iluvatar82/helixtoolkit-halfedgedatastructure
 Issue tracker       | http://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure/issues
-NuGet packages      | http://www.nuget.org/packages?q=HelixToolkit.HalfEdgeDataStructure
 
 ## News
 
