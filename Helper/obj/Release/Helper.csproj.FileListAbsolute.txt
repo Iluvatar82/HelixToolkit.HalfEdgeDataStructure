@@ -1,0 +1,16 @@
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\Helper.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\Helper.pdb
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\HalfEdgeDataStructure.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\HelixToolkit.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\HelixToolkit.Wpf.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\WindowsBase.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\HalfEdgeDataStructure.pdb
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\HelixToolkit.pdb
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\HelixToolkit.xml
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\HelixToolkit.Wpf.pdb
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Release\HelixToolkit.Wpf.xml
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Release\Helper.csprojAssemblyReference.cache
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Release\Helper.csproj.CoreCompileInputs.cache
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Release\Helper.csproj.CopyComplete
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Release\Helper.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Release\Helper.pdb

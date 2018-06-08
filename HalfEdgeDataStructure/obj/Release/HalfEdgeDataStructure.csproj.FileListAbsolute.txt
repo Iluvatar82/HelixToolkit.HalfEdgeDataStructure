@@ -1,0 +1,6 @@
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\bin\Release\HalfEdgeDataStructure.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\bin\Release\HalfEdgeDataStructure.pdb
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\obj\Release\HalfEdgeDataStructure.csprojAssemblyReference.cache
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\obj\Release\HalfEdgeDataStructure.csproj.CoreCompileInputs.cache
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\obj\Release\HalfEdgeDataStructure.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\obj\Release\HalfEdgeDataStructure.pdb
