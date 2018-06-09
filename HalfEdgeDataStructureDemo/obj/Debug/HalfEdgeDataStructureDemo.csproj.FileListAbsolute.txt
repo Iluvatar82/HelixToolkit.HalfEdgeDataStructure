@@ -23,3 +23,5 @@ D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\HalfEdgeDataStructureDemo.csproj.CopyComplete
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\HalfEdgeDataStructureDemo.exe
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\obj\Debug\HalfEdgeDataStructureDemo.pdb
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\bin\Debug\System.ValueTuple.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructureDemo\bin\Debug\System.ValueTuple.xml

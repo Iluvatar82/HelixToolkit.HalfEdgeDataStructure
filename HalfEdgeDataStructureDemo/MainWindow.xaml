@@ -7,9 +7,9 @@
         mc:Ignorable="d"
         Title="HalfEdge Demo" Height="450" Width="800" WindowState="Maximized">
     <Grid>
-        <helix:HelixViewport3D x:Name="ViewPort" RotateAroundMouseDownPoint="True">
+        <helix:HelixViewport3D x:Name="ViewPort" RotateAroundMouseDownPoint="True" ZoomAroundMouseDownPoint="True">
             <helix:HelixViewport3D.Camera>
-                <PerspectiveCamera x:Name="Camera" Position="-2,-10, 12" LookDirection="2, 8, -8" UpDirection="0, 0, 1"></PerspectiveCamera>
+                <PerspectiveCamera x:Name="Camera" Position="-4,-10, 12" LookDirection="3, 8, -8" UpDirection="0, 0, 1"></PerspectiveCamera>
             </helix:HelixViewport3D.Camera>
             <helix:ArrowVisual3D x:Name="xAxis" Direction="5,0,0" HeadLength="2" Diameter="0.05" Fill="#FF00FF00"/>
             <helix:BillboardTextVisual3D x:Name="xAxisLabel" Position="5.1, 0, 0" Text="X" Foreground="Green" FontSize="18" />

@@ -11,7 +11,7 @@ namespace Helper
     public static class ExtensionMethods
     {
         private static readonly double EdgeDiameter = 0.002;
-        private static readonly double VertexRadius = EdgeDiameter * 0.5;
+        private static readonly double VertexRadius = EdgeDiameter * 0.75;
         private static readonly double Offset = 0.0001;
         private static readonly Color DefaultForegroundColor = Colors.White;
         private static readonly Color DefaultBackgroundColor = Colors.LightYellow;
@@ -46,8 +46,8 @@ namespace Helper
                 Mesh = mesh3D,
                 FaceMaterial = frontMaterial,
                 FaceBackMaterial = backMaterial,
-                EdgeDiameter = EdgeDiameter,
-                VertexRadius = VertexRadius
+                EdgeDiameter = 0,
+                VertexRadius = 0
             };
 
             return meshVisual;

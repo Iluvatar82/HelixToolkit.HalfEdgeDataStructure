@@ -14,6 +14,7 @@ namespace Helper
     [Flags]
     public enum CubeSides
     {
+        None = 0x000000,
         PositiveX = 0x100000,
         NegativeX = 0x010000,
         X = PositiveX | NegativeX,
@@ -45,6 +46,7 @@ namespace Helper
                 new Vertex(6, 2, 0), new Vertex(5, 3, 0)
 
             };
+
             var triangles = new List<Triangle> {
                 new Triangle(0, 1, 2),
                 new Triangle(3, 4, 1),
@@ -56,6 +58,7 @@ namespace Helper
                 new Triangle(4, 2, 1),
                 new Triangle(4, 7, 6)
             };
+
             return new HalfEdgeMesh(points, triangles);
         }
 
@@ -80,6 +83,7 @@ namespace Helper
                 new Vertex(0, 1 ,1),
             };
             points = points.Select(p => new Vertex(new Vector(p) * size + origin)).ToList();
+
             var triangles = new List<Triangle>();
             if(sides.HasFlag(CubeSides.NegativeZ))
             {
@@ -111,7 +115,109 @@ namespace Helper
                 triangles.Add(new Triangle(3, 0, 4));
                 triangles.Add(new Triangle(3, 4, 7));
             }
+
             return new HalfEdgeMesh(points, triangles);
+        }
+
+        /// <summary>
+        /// Generate a HalfEdgeMesh of a Sphere.
+        /// </summary>
+        /// <param name="center">The Center of the Sphere.</param>
+        /// <param name="radius">The Radius of the Sphere.</param>
+        /// <param name="numSides">Number of Sides of the Sphere (multiply by 4 for one Ring).</param>
+        /// <param name="sphereSides">Which Sides of the Sphere should be generated.</param>
+        /// <returns>The generated HalfEdgeMesh.</returns>
+        public static HalfEdgeMesh GenerateSphere(Vector center, double radius = 1, int numSides = 8, CubeSides sphereSides = CubeSides.All)
+        {
+            var mesh = new HalfEdgeMesh();
+            var sideLength = 1.0 / numSides;
+            var pointInfo = new List<(Vertex, CubeSides)>();
+            for(int z = 0; z <= numSides; z++)
+            {
+                for(int y = 0; y <= numSides; y++)
+                {
+                    for(int x = 0; x <= numSides; x++)
+                    {
+                        if(z == 0 || z == numSides || x == 0 || x == numSides || y == 0 || y == numSides)
+                        {
+                            var vertex = new Vertex(x, y, z);
+                            var vertexSides = CubeSides.None;
+                            if(x == 0)
+                                vertexSides |= CubeSides.NegativeX;
+                            else if(x == numSides)
+                                vertexSides |= CubeSides.PositiveX;
+
+                            if(y == 0)
+                                vertexSides |= CubeSides.NegativeY;
+                            else if(y == numSides)
+                                vertexSides |= CubeSides.PositiveY;
+
+                            if(z == 0)
+                                vertexSides |= CubeSides.NegativeZ;
+                            else if(z == numSides)
+                                vertexSides |= CubeSides.PositiveZ;
+
+                            pointInfo.Add((vertex, vertexSides));
+                        }
+                    }
+                }
+            }
+            pointInfo = pointInfo.Select(pi =>
+            {
+                var shiftedVector = new Vector(pi.Item1) * sideLength - new Vector(0.5, 0.5, 0.5);
+                shiftedVector.Normalize();
+                return (new Vertex(shiftedVector * radius + center), pi.Item2);
+            }).ToList();
+            mesh.AddPoints(pointInfo.Select(pi => pi.Item1).ToList());
+
+            var triangles = new List<Triangle>();
+            var bottomPoints = pointInfo.Where(pi => pi.Item2.HasFlag(CubeSides.NegativeZ)).Select(pi => pi.Item1).ToList();
+            var topPoints = pointInfo.Where(pi => pi.Item2.HasFlag(CubeSides.PositiveZ)).Select(pi => pi.Item1).ToList();
+            var frontPoints = pointInfo.Where(pi => pi.Item2.HasFlag(CubeSides.NegativeY)).Select(pi => pi.Item1).ToList();
+            var backPoints = pointInfo.Where(pi => pi.Item2.HasFlag(CubeSides.PositiveY)).Select(pi => pi.Item1).ToList();
+            var leftPoints = pointInfo.Where(pi => pi.Item2.HasFlag(CubeSides.NegativeX)).Select(pi => pi.Item1).ToList();
+            var rightPoints = pointInfo.Where(pi => pi.Item2.HasFlag(CubeSides.PositiveX)).Select(pi => pi.Item1).ToList();
+            for(int i = 0; i < numSides * numSides; i++)
+            {
+                var idx = i + i / numSides;
+                if(sphereSides.HasFlag(CubeSides.NegativeZ))
+                {
+                    triangles.Add(new Triangle(bottomPoints[idx].Index, bottomPoints[idx + numSides + 2].Index, bottomPoints[idx + 1].Index));
+                    triangles.Add(new Triangle(bottomPoints[idx].Index, bottomPoints[idx + numSides + 1].Index, bottomPoints[idx + numSides + 2].Index));
+                }
+
+                if(sphereSides.HasFlag(CubeSides.PositiveZ))
+                {
+                    triangles.Add(new Triangle(topPoints[idx].Index, topPoints[idx + 1].Index, topPoints[idx + numSides + 2].Index));
+                    triangles.Add(new Triangle(topPoints[idx].Index, topPoints[idx + numSides + 2].Index, topPoints[idx + numSides + 1].Index));
+                }
+
+                if(sphereSides.HasFlag(CubeSides.NegativeY))
+                {
+                    triangles.Add(new Triangle(frontPoints[idx].Index, frontPoints[idx + 1].Index, frontPoints[idx + numSides + 2].Index));
+                    triangles.Add(new Triangle(frontPoints[idx].Index, frontPoints[idx + numSides + 2].Index, frontPoints[idx + numSides + 1].Index));
+                }
+
+                if(sphereSides.HasFlag(CubeSides.PositiveY))
+                {
+                    triangles.Add(new Triangle(backPoints[idx].Index, backPoints[idx + numSides + 2].Index, backPoints[idx + 1].Index));
+                    triangles.Add(new Triangle(backPoints[idx].Index, backPoints[idx + numSides + 1].Index, backPoints[idx + numSides + 2].Index));
+                }
+
+                if(sphereSides.HasFlag(CubeSides.NegativeX))
+                {
+                    triangles.Add(new Triangle(leftPoints[idx].Index, leftPoints[idx + numSides + 2].Index, leftPoints[idx + 1].Index));
+                    triangles.Add(new Triangle(leftPoints[idx].Index, leftPoints[idx + numSides + 1].Index, leftPoints[idx + numSides + 2].Index));
+                }
+
+                if(sphereSides.HasFlag(CubeSides.PositiveX))
+                {
+                    triangles.Add(new Triangle(rightPoints[idx].Index, rightPoints[idx + 1].Index, rightPoints[idx + numSides + 2].Index));
+                    triangles.Add(new Triangle(rightPoints[idx].Index, rightPoints[idx + numSides + 2].Index, rightPoints[idx + numSides + 1].Index));
+                }
+            }
+
+            return new HalfEdgeMesh(pointInfo.Select(pi => pi.Item1).ToList(), triangles);
         }
 
         /// <summary>

@@ -22,6 +22,7 @@ namespace HalfEdgeDataStructureDemo
 
             ///Demo Scene
             var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero(), 2, CubeSides.All);
+            var bigCube = triMesh.CreateMeshVisual3D(default(Color), default(Color));
             ViewPort.Children.Add(triMesh.CreateMeshVisual3D(default(Color), default(Color)));
             ViewPort.Children.Add(triMesh.CreateBoundaryVisual3D(default(Color)));
 
@@ -39,11 +40,24 @@ namespace HalfEdgeDataStructureDemo
 
 
             MeshBuilder mb = new MeshBuilder();
-            mb.AddSphere(new Point3D(3, -1, .5), .5);
+            mb.AddSphere(new Point3D(3, -1, 0.5), 0.5);
             var mg = mb.ToMesh();
             triMesh = HalfEdgeMeshGenerator.GenerateFromMeshGeometry3D(mg);
             ViewPort.Children.Add(triMesh.CreateMeshVisual3D(default(Color), default(Color)));
             ViewPort.Children.Add(triMesh.CreateBoundaryVisual3D(default(Color)));
+
+            var sphere = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(-2, 1, 1), 1, 4,
+                CubeSides.All & ~CubeSides.PositiveX & ~CubeSides.NegativeY & ~CubeSides.PositiveZ);
+            ViewPort.Children.Add(sphere.CreateMeshVisual3D(default(Color), default(Color)));
+            ViewPort.Children.Add(sphere.CreateBoundaryVisual3D(default(Color)));
+
+            var sphere2 = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(-1.975, 0.975, 1.025), 1, 32,
+                CubeSides.All & ~CubeSides.NegativeX & ~CubeSides.PositiveY & ~CubeSides.NegativeZ);
+            ViewPort.Children.Add(sphere2.CreateMeshVisual3D(default(Color), default(Color)));
+            ViewPort.Children.Add(sphere2.CreateBoundaryVisual3D(default(Color)));
+
+            var sphere3 = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(2, -0.5, 0.5), 0.5, 16);
+            ViewPort.Children.Add(sphere3.CreateMeshVisual3D(Colors.LightGoldenrodYellow, default(Color)));
         }
     }
 }

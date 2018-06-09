@@ -14,3 +14,5 @@ D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Debug\Helper.csproj.Core
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Debug\Helper.csproj.CopyComplete
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Debug\Helper.dll
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\obj\Debug\Helper.pdb
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Debug\System.ValueTuple.dll
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\Helper\bin\Debug\System.ValueTuple.xml
