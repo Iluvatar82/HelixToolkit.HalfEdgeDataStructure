@@ -6,42 +6,48 @@ using System.Runtime.Serialization;
 namespace HalfEdgeDataStructure
 {
     /// <summary>
-    /// Represents a Vertex of the HalfEdge DataStructure
+    /// Represents a Vertex of the HalfEdge DataStructure.
     /// </summary>
     [Serializable]
     public class Vertex : AbstractMeshElement, ICloneable, ISerializable
     {
-        private double _x;
-        private double _y;
-        private double _z;
+        private Double3 _position;
         private int _halfEdgeIndex;
 
         /// <summary>
-        /// X Position
+        /// X Position.
         /// </summary>
         public double X {
-            get { return _x; }
-            set { _x = value; }
+            get { return _position.X; }
+            set { _position.X = value; }
         }
 
         /// <summary>
-        /// Y Position
+        /// Y Position.
         /// </summary>
         public double Y {
-            get { return _y; }
-            set { _y = value; }
+            get { return _position.Y; }
+            set { _position.Y = value; }
         }
 
         /// <summary>
-        /// Z Position
+        /// Z Position.
         /// </summary>
         public double Z {
-            get { return _z; }
-            set { _z = value; }
+            get { return _position.Z; }
+            set { _position.Z = value; }
         }
 
         /// <summary>
-        /// One HalfEdge incident to this Vertex
+        /// Position of the Vertex.
+        /// </summary>
+        public Double3 Position {
+            get { return _position; }
+            set { _position = value; }
+        }
+
+        /// <summary>
+        /// First HalfEdge incident to this Vertex.
         /// </summary>
         public HalfEdge OutgoingHalfEdge {
             get
@@ -54,32 +60,32 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
-        /// Index of the Outgoing HalfEdge
+        /// Index of the Outgoing HalfEdge.
         /// </summary>
         public int HalfEdgeIndex {
             set { _halfEdgeIndex = value; }
         }
 
         /// <summary>
-        /// Is the Vertex on the Border or not
+        /// Is the Vertex on the Border or not.
         /// </summary>
         public bool IsOnBorder {
             get { return IncidentHalfEdges.Any(he => he.IsOnBorder); }
         }
 
         /// <summary>
-        /// All Vertices ajdacent to this Vertex (i.e. directly connected via a HalfEdge)
+        /// All Vertices ajdacent to this Vertex (i.e. directly connected via a HalfEdge) in Clockwise manner.
         /// </summary>
         public IEnumerable<Vertex> NeighborVertices {
             get
             {
                 foreach(var incidentHalfEdge in IncidentHalfEdges)
-                    yield return incidentHalfEdge.EndPoint;
+                    yield return incidentHalfEdge.EndVertex;
             }
         }
 
         /// <summary>
-        /// All HalfEdges with this Vertex as StartPoint
+        /// All HalfEdges with this Vertex as StartPoint.
         /// </summary>
         public IEnumerable<HalfEdge> IncidentHalfEdges {
             get
@@ -100,38 +106,43 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
-        /// Default Constructor, calls the Base Constructor
+        /// Default Constructor, calls the Base Constructor.
         /// </summary>
         public Vertex()
             :base()
         {
-            _x = 0;
-            _y = 0;
-            _z = 0;
+            _position = new Double3();
             _halfEdgeIndex = -1;
         }
 
         /// <summary>
-        /// Constructor with Position Values
+        /// Constructor with Position Values.
         /// </summary>
-        /// <param name="x">X - Position of the Vertex</param>
-        /// <param name="y">Y - Position of the Vertex</param>
-        /// <param name="z">Z - Position of the Vertex</param>
+        /// <param name="x">X Position of the Vertex.</param>
+        /// <param name="y">Y Position of the Vertex.</param>
+        /// <param name="z">Z Position of the Vertex.</param>
         public Vertex(double x, double y, double z)
             :this()
         {
-            _x = x;
-            _y = y;
-            _z = z;
+            _position = new Double3(x, y, z);
         }
 
         /// <summary>
-        /// Constructor with the HalfEdgeMesh and Position Values
+        /// Constructor with Position Values.
         /// </summary>
-        /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to</param>
-        /// <param name="x">X - Position of the Vertex</param>
-        /// <param name="y">Y - Position of the Vertex</param>
-        /// <param name="z">Z - Position of the Vertex</param>
+        /// <param name="position">The Position of the Vertex.</param>
+        public Vertex(Double3 position)
+            :this(position.X, position.Y, position.Z)
+        {
+        }
+
+        /// <summary>
+        /// Constructor with the HalfEdgeMesh and Position Values.
+        /// </summary>
+        /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
+        /// <param name="x">X Position of the Vertex.</param>
+        /// <param name="y">Y Position of the Vertex.</param>
+        /// <param name="z">Z Position of the Vertex.</param>
         public Vertex(HalfEdgeMesh triangleMesh, double x, double y, double z)
             :this(x, y, z)
         {
@@ -139,69 +150,65 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
-        /// Constructor that uses an existing Vertex to create a new Vertex
+        /// Constructor that uses an existing Vertex to create a new Vertex.
         /// </summary>
-        /// <param name="vertex">Existing Vertex</param>
+        /// <param name="vertex">Existing Vertex.</param>
         public Vertex(Vertex vertex)
             :this(vertex.TriangleMesh, vertex.X, vertex.Y, vertex.Z)
         { }
 
         /// <summary>
-        /// Constructor that uses an existing Vector to create a new Vertex
+        /// Constructor that uses an existing Vector to create a new Vertex.
         /// </summary>
-        /// <param name="vector">Existing Vector</param>
+        /// <param name="vector">Existing Vector.</param>
         public Vertex(Vector vector)
             : this(vector.X, vector.Y, vector.Z)
         { }
 
         /// <summary>
-        /// Constructor that is used by the Deserialization
+        /// Constructor that is used by the Deserialization.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">The SerializationInfo.</param>
+        /// <param name="context">The StreamingContext.</param>
         public Vertex(SerializationInfo info, StreamingContext context)
         {
             TriangleMesh = (HalfEdgeMesh)info.GetValue("HalfEdgeMesh", typeof(HalfEdgeMesh));
             Index = -1;
-            _x = (double)info.GetValue("X", typeof(double));
-            _y = (double)info.GetValue("Y", typeof(double));
-            _z = (double)info.GetValue("Z", typeof(double));
+            _position = (Double3)info.GetValue("Position", typeof(Double3));
             _halfEdgeIndex = -1;
         }
 
 
         /// <summary>
-        /// Clone this Vertex and return a Copy of it
+        /// Clone this Vertex and return a Copy of it.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Cloned Object.</returns>
         public object Clone()
         {
             return new Vertex(this);
         }
 
         /// <summary>
-        /// Serialize the Vertex
+        /// Serialize the Vertex.
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
+        /// <param name="info">The SerializationInfo.</param>
+        /// <param name="context">The StreamingContext.</param>
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("HalfEdgeMesh", TriangleMesh, typeof(HalfEdgeMesh));
-            info.AddValue("X", _x, typeof(double));
-            info.AddValue("Y", _x, typeof(double));
-            info.AddValue("Z", _x, typeof(double));
+            info.AddValue("Position", Position, typeof(Double3));
         }
 
         /// <summary>
-        /// HalfEdge connecting this Vertex to the <para=other>other</para> Vertex
+        /// HalfEdge connecting this Vertex to the <paramref name="other"/> Vertex.
         /// </summary>
         /// <param name="other"></param>
-        /// <returns></returns>
+        /// <returns>A HalfEdge from this Vertex to the <paramref name="other"/> Vertex, if it exists. Null otherwise.</returns>
         public HalfEdge HalfEdgeTo(Vertex other)
         {
             foreach(var incidentHalfEdge in IncidentHalfEdges)
             {
-                if (incidentHalfEdge.EndPoint == other)
+                if (incidentHalfEdge.EndVertex == other)
                     return incidentHalfEdge;
             }
 
@@ -210,23 +217,23 @@ namespace HalfEdgeDataStructure
 
 
         /// <summary>
-        /// Calculates the Vector between two Vertices
+        /// Calculates the Vector between two Vertices.
         /// </summary>
-        /// <param name="end">End Vertex</param>
-        /// <param name="start">Start Vertex</param>
-        /// <returns>Vector ranging from the Start Vertex to the End Vertex</returns>
+        /// <param name="end">The End Vertex.</param>
+        /// <param name="start">The Start Vertex.</param>
+        /// <returns>Vector ranging from the <paramref name="start"/> Vertex to the <paramref name="end"/> Vertex.</returns>
         public static Vector operator -(Vertex end, Vertex start)
         {
             return new Vector(end.X - start.X, end.Y - start.Y, end.Z - start.Z);
         }
 
         /// <summary>
-        /// Creates a String Representation of the Vertex
+        /// Creates a String Representation of this Vertex.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>String representation of this Vertex.</returns>
         public override string ToString()
         {
-            return $"[{_x:0.00}; {_y:0.00}; {_z:0.00}]";
+            return $"[{_position.ToString()}]";
         }
     }
 }

@@ -8,6 +8,9 @@ using Triangle = HalfEdgeDataStructure.Triangle;
 
 namespace Helper
 {
+    /// <summary>
+    /// Enumeration for all Cube Sides.
+    /// </summary>
     [Flags]
     public enum CubeSides
     {
@@ -23,8 +26,15 @@ namespace Helper
         All = X | Y | Z
     }
 
+    /// <summary>
+    /// Helper Class to generate HalfEdgeMeshes.
+    /// </summary>
     public static class HalfEdgeMeshGenerator
     {
+        /// <summary>
+        /// Generate a Test HalfEdgeMesh that was used to test the Creation and Modification of the HalfEdges.
+        /// </summary>
+        /// <returns>The generated HalfEdgeMesh.</returns>
         public static HalfEdgeMesh GenerateHalfEdgeTests()
         {
             var points = new List<Vertex> {
@@ -49,6 +59,13 @@ namespace Helper
             return new HalfEdgeMesh(points, triangles);
         }
 
+        /// <summary>
+        /// Generate a HalfEdgeMesh of a Cube.
+        /// </summary>
+        /// <param name="origin">The Origin of the Cube.</param>
+        /// <param name="size">The Size of the Cube.</param>
+        /// <param name="sides">Defines which Sides of the Cube should be generated (default = All Sides).</param>
+        /// <returns>The generated HalfEdgeMesh.</returns>
         public static HalfEdgeMesh GenerateCube(Vector origin, double size = 1, CubeSides sides = CubeSides.All)
         {
             var points = new List<Vertex>()
@@ -97,6 +114,11 @@ namespace Helper
             return new HalfEdgeMesh(points, triangles);
         }
 
+        /// <summary>
+        /// Generate a HalfEdgeMesh from an existing MeshGeometry3D Object.
+        /// </summary>
+        /// <param name="meshGeometry">The existing MeshGeometry3D Object.</param>
+        /// <returns>The generated HalfEdgeMesh.</returns>
         public static HalfEdgeMesh GenerateFromMeshGeometry3D(MeshGeometry3D meshGeometry)
         {
             var points = meshGeometry.Positions.Select(p => new Vertex(p.X, p.Y, p.Z)).ToList();

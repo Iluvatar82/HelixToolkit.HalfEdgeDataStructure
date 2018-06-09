@@ -4,59 +4,77 @@ using System.Runtime.Serialization;
 
 namespace HalfEdgeDataStructure
 {
+    /// <summary>
+    /// Represents a Triangle of the HalfEdge DataStructure.
+    /// </summary>
     [Serializable]
     public class Triangle : AbstractMeshElement, ICloneable, ISerializable
     {
-        private int _indexPoint1;
-        private int _indexPoint2;
-        private int _indexPoint3;
+        private int _vertexIndex1;
+        private int _vertexIndex2;
+        private int _vertexIndex3;
         private int _halfEdgeIndex;
         private Vector _normal;
         private double _area;
 
 
-        public Vertex Point1 {
+        /// <summary>
+        /// First Vertex of this Triangle.
+        /// </summary>
+        public Vertex Vertex1 {
             get
             {
-                if(TriangleMesh != null && _indexPoint1 > -1 && _indexPoint1 < TriangleMesh.Vertices.Count)
-                    return TriangleMesh.Vertices[_indexPoint1];
+                if(TriangleMesh != null && _vertexIndex1 > -1 && _vertexIndex1 < TriangleMesh.Vertices.Count)
+                    return TriangleMesh.Vertices[_vertexIndex1];
 
                 return null;
             }
         }
 
-        public Vertex Point2 {
+        /// <summary>
+        /// Second Vertex of this Triangle.
+        /// </summary>
+        public Vertex Vertex2 {
             get
             {
-                if(TriangleMesh != null && _indexPoint2 > -1 && _indexPoint2 < TriangleMesh.Vertices.Count)
-                    return TriangleMesh.Vertices[_indexPoint2];
+                if(TriangleMesh != null && _vertexIndex2 > -1 && _vertexIndex2 < TriangleMesh.Vertices.Count)
+                    return TriangleMesh.Vertices[_vertexIndex2];
 
                 return null;
             }
         }
 
-        public Vertex Point3 {
+        /// <summary>
+        /// Third Vertex of this Triangle.
+        /// </summary>
+        public Vertex Vertex3 {
             get
             {
-                if(TriangleMesh != null && _indexPoint3 > -1 && _indexPoint3 < TriangleMesh.Vertices.Count)
-                    return TriangleMesh.Vertices[_indexPoint3];
+                if(TriangleMesh != null && _vertexIndex3 > -1 && _vertexIndex3 < TriangleMesh.Vertices.Count)
+                    return TriangleMesh.Vertices[_vertexIndex3];
 
                 return null;
             }
         }
 
-        public int[] PointIndizes {
+        /// <summary>
+        /// Indices of all three Vertices of this Triangle
+        /// </summary>
+        public int[] VertexIndizes {
             get
             {
                 return new int[]
                 {
-                    _indexPoint1,
-                    _indexPoint2,
-                    _indexPoint3
+                    _vertexIndex1,
+                    _vertexIndex2,
+                    _vertexIndex3
                 };
             }
         }
 
+        /// <summary>
+        /// First HalfEdge incident to this Triangle.
+        /// </summary>
         public HalfEdge OutgoingHalfEdge {
             get
             {
@@ -67,35 +85,50 @@ namespace HalfEdgeDataStructure
             }
         }
 
+        /// <summary>
+        /// All HalfEdges that exist between the three Vertices.
+        /// </summary>
         public IEnumerable<HalfEdge> ExistingHalfEdgesBetweenVertices {
             get
             {
-                var result = Point1.HalfEdgeTo(Point2);
+                var result = Vertex1.HalfEdgeTo(Vertex2);
                 if(result != null)
                     yield return result;
-                result = Point2.HalfEdgeTo(Point3);
+                result = Vertex2.HalfEdgeTo(Vertex3);
                 if(result != null)
                     yield return result;
-                result = Point3.HalfEdgeTo(Point1);
+                result = Vertex3.HalfEdgeTo(Vertex1);
                 if(result != null)
                     yield return result;
             }
         }
 
+        /// <summary>
+        /// The Index of the first HalfEdge of this Triangle.
+        /// </summary>
         public int HalfEdgeIndex {
             set { _halfEdgeIndex = value; }
         }
 
+        /// <summary>
+        /// The Normal of this Triangle.
+        /// </summary>
         public Vector Normal {
             get { return _normal; }
             set { _normal = value; }
         }
 
+        /// <summary>
+        /// The Area of this Triangle.
+        /// </summary>
         public double Area {
             get { return _area; }
         }
 
-        public new HalfEdgeMesh TriangleMesh {
+        /// <summary>
+        /// Reference to the TriangleMesh.
+        /// </summary>
+        public override HalfEdgeMesh TriangleMesh {
             get { return base.TriangleMesh; }
             set {
                 base.TriangleMesh = value;
@@ -105,6 +138,9 @@ namespace HalfEdgeDataStructure
             }
         }
 
+        /// <summary>
+        /// Is the Triangle on the Border or not.
+        /// </summary>
         public bool IsOnBorder {
             get
             {
@@ -114,71 +150,110 @@ namespace HalfEdgeDataStructure
         }
 
 
+        /// <summary>
+        /// Default Constructor, calls the Base Constructor.
+        /// </summary>
         public Triangle()
             :base()
         {
-            _indexPoint1 = -1;
-            _indexPoint2 = -1;
-            _indexPoint3 = -1;
+            _vertexIndex1 = -1;
+            _vertexIndex2 = -1;
+            _vertexIndex3 = -1;
             _halfEdgeIndex = -1;
 
             _normal = new Vector();
             _area = 0;
         }
 
-        public Triangle(int point1, int point2, int point3)
+        /// <summary>
+        /// Constructor with three Vertex Indices.
+        /// </summary>
+        /// <param name="vertex1">Index of the first Vertex.</param>
+        /// <param name="vertex2">Index of the second Vertex.</param>
+        /// <param name="vertex3">Index of the third Vertex.</param>
+        public Triangle(int vertex1, int vertex2, int vertex3)
             :this()
         {
-            _indexPoint1 = point1;
-            _indexPoint2 = point2;
-            _indexPoint3 = point3;
+            _vertexIndex1 = vertex1;
+            _vertexIndex2 = vertex2;
+            _vertexIndex3 = vertex3;
         }
 
-        public Triangle(HalfEdgeMesh triangleMesh, int point1, int point2, int point3)
-            :this(point1, point2, point3)
+        /// <summary>
+        /// Constructor with the HalfEdgeMesh and three Vertex Indices.
+        /// Since also the Positions are clear, the <see cref="Normal"/> and the <see cref="Area"/> are calculated.
+        /// </summary>
+        /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
+        /// <param name="vertex1">Index of the first Vertex.</param>
+        /// <param name="vertex2">Index of the second Vertex.</param>
+        /// <param name="vertex3">Index of the third Vertex.</param>
+        public Triangle(HalfEdgeMesh triangleMesh, int vertex1, int vertex2, int vertex3)
+            :this(vertex1, vertex2, vertex3)
         {
             TriangleMesh = triangleMesh;
 
-            Calculate();
+            if (TriangleMesh != null)
+                Calculate();
         }
 
+        /// <summary>
+        /// Constructor that uses an existing Triangle to create a new Triangle.
+        /// </summary>
+        /// <param name="triangle">Existing Triangle.</param>
         public Triangle(Triangle triangle)
-            : this(triangle.TriangleMesh, triangle._indexPoint1, triangle._indexPoint2, triangle._indexPoint3)
+            : this(triangle.TriangleMesh, triangle._vertexIndex1, triangle._vertexIndex2, triangle._vertexIndex3)
         { }
 
+        /// <summary>
+        /// Constructor that is used by the Deserialization.
+        /// </summary>
+        /// <param name="info">The SerializationInfo.</param>
+        /// <param name="context">The StreamingContext.</param>
         public Triangle(SerializationInfo info, StreamingContext context)
         {
             TriangleMesh = (HalfEdgeMesh)info.GetValue("TriangleMesh", typeof(HalfEdgeMesh));
             Index = -1;
-            _indexPoint1 = (int)info.GetValue("PointIndex1", typeof(int));
-            _indexPoint2 = (int)info.GetValue("PointIndex2", typeof(int));
-            _indexPoint3 = (int)info.GetValue("PointIndex3", typeof(int));
+            _vertexIndex1 = (int)info.GetValue("VertexIndex1", typeof(int));
+            _vertexIndex2 = (int)info.GetValue("VertexIndex2", typeof(int));
+            _vertexIndex3 = (int)info.GetValue("VertexIndex3", typeof(int));
             _halfEdgeIndex = -1;
 
             Calculate();
         }
 
 
+        /// <summary>
+        /// Clone this Triangle and return a Copy of it.
+        /// </summary>
+        /// <returns>Cloned Object.</returns>
         public object Clone()
         {
             return new Triangle(this);
         }
 
+        /// <summary>
+        /// Serialize the Triangle.
+        /// </summary>
+        /// <param name="info">The SerializationInfo.</param>
+        /// <param name="context">The StreamingContext.</param>
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("TriangleMesh", TriangleMesh, typeof(HalfEdgeMesh));
-            info.AddValue("PointIndex1", _indexPoint1, typeof(int));
-            info.AddValue("PointIndex2", _indexPoint2, typeof(int));
-            info.AddValue("PointIndex3", _indexPoint3, typeof(int));
+            info.AddValue("VertexIndex1", _vertexIndex1, typeof(int));
+            info.AddValue("VertexIndex2", _vertexIndex2, typeof(int));
+            info.AddValue("VertexIndex3", _vertexIndex3, typeof(int));
         }
 
+        /// <summary>
+        /// Calculate additional Properties of the Triangle like <see cref="Normal"/> and <see cref="Area"/>.
+        /// </summary>
         private void Calculate()
         {
             if(TriangleMesh == null)
                 return;
 
-            var vector12 = TriangleMesh.Vertices[_indexPoint2] - TriangleMesh.Vertices[_indexPoint1];
-            var vector13 = TriangleMesh.Vertices[_indexPoint3] - TriangleMesh.Vertices[_indexPoint1];
+            var vector12 = TriangleMesh.Vertices[_vertexIndex2] - TriangleMesh.Vertices[_vertexIndex1];
+            var vector13 = TriangleMesh.Vertices[_vertexIndex3] - TriangleMesh.Vertices[_vertexIndex1];
 
             var cross = Vector.Cross(vector12, vector13);
             _area = cross.Length * 0.5;
@@ -186,27 +261,35 @@ namespace HalfEdgeDataStructure
             _normal = cross;
         }
 
+        /// <summary>
+        /// Shift the Indices of the Vertieces so that the provided Index ist first in the List.
+        /// If the <paramref name="firstPointIndex"/> is not in the List of Vertex Indices of this Triangle nothing happens.
+        /// </summary>
+        /// <param name="firstPointIndex">The Index of the Vertex which should be first in the List of Indices.</param>
         public void SetFirstPointIndex(int firstPointIndex)
         {
-            if(_indexPoint1 != firstPointIndex && _indexPoint2 != firstPointIndex && _indexPoint3 != firstPointIndex)
+            if(_vertexIndex1 != firstPointIndex && _vertexIndex2 != firstPointIndex && _vertexIndex3 != firstPointIndex)
                 return;
 
-            while(_indexPoint1 != firstPointIndex)
+            while(_vertexIndex1 != firstPointIndex)
             {
-                var tempIndex = _indexPoint1;
-                _indexPoint1 = _indexPoint2;
-                _indexPoint2 = _indexPoint3;
-                _indexPoint3 = tempIndex;
+                var tempIndex = _vertexIndex1;
+                _vertexIndex1 = _vertexIndex2;
+                _vertexIndex2 = _vertexIndex3;
+                _vertexIndex3 = tempIndex;
             }
         }
 
-
+        /// <summary>
+        /// Creates a String Representation of this Triangle.
+        /// </summary>
+        /// <returns>String representation of this Triangle.</returns>
         public override string ToString()
         {
-            return $"Point1: [{Point1.X:0.00}; {Point1.Y:0.00}; {Point1.Z:0.00}] " +
-                   $"Point2: [{Point2.X:0.00}; {Point2.Y:0.00}; {Point2.Z:0.00}] " +
-                   $"Point3: [{Point3.X:0.00}; {Point3.Y:0.00}; {Point3.Z:0.00}] " +
-                   $"Normal: [{_normal.X:0.00}; {_normal.Y:0.00}; {_normal.Z:0.00}] " +
+            return $"Vertex1: {Vertex1.ToString()} " +
+                   $"Vertex2: {Vertex2.ToString()} " +
+                   $"Vertex3: {Vertex3.ToString()} " +
+                   $"Normal: {_normal.ToString()} " +
                    $"Area: [{_area:0.00}]";
         }
     }

@@ -11,7 +11,7 @@
         /// <summary>
         /// Reference to the TriangleMesh
         /// </summary>
-        public HalfEdgeMesh TriangleMesh {
+        public virtual HalfEdgeMesh TriangleMesh {
             get { return _triangleMesh; }
             set { _triangleMesh = value; }
         }
