@@ -15,7 +15,6 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// X Value.
         /// </summary>
-
         public double X {
             get { return _x; }
             set { _x = value; }
@@ -33,6 +32,30 @@ namespace HalfEdgeDataStructure
         /// Z Value.
         /// </summary>
         public double Z {
+            get { return _z; }
+            set { _z = value; }
+        }
+
+        /// <summary>
+        /// U Value.
+        /// </summary>
+        public double U {
+            get { return _x; }
+            set { _x = value; }
+        }
+
+        /// <summary>
+        /// V Value.
+        /// </summary>
+        public double V {
+            get { return _y; }
+            set { _y = value; }
+        }
+
+        /// <summary>
+        /// W Value.
+        /// </summary>
+        public double W {
             get { return _z; }
             set { _z = value; }
         }
@@ -67,6 +90,25 @@ namespace HalfEdgeDataStructure
         {
             return new Double3(this);
         }
+
+        /// <summary>
+        /// Implicitly convert a Double3 to a Vector.
+        /// </summary>
+        /// <param name="values">The Double3 to convert.</param>
+        public static implicit operator Vector(Double3 values)
+        {
+            return new Vector(values);
+        }
+
+        /// <summary>
+        /// Implicitly convert a Double3 to a Vertex.
+        /// </summary>
+        /// <param name="values">The Double3 to convert.</param>
+        public static implicit operator Vertex(Double3 values)
+        {
+            return new Vertex(values);
+        }
+
 
         /// <summary>
         /// Creates a String Representation of this Double3.

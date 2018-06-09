@@ -12,7 +12,10 @@ namespace HalfEdgeDataStructure
     public class Vertex : AbstractMeshElement, ICloneable, ISerializable
     {
         private Double3 _position;
+        private Double3 _textureCoordinate;
+        private Vector _normal;
         private int _halfEdgeIndex;
+
 
         /// <summary>
         /// X Position.
@@ -47,9 +50,25 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// TextureCoordinate of the Vertex.
+        /// </summary>
+        public Double3 TextureCoordinate {
+            get { return _textureCoordinate; }
+            set { _textureCoordinate = value; }
+        }
+
+        /// <summary>
+        /// Normal of the Vertex.
+        /// </summary>
+        public Vector Normal {
+            get { return _normal; }
+            set { _normal = value; }
+        }
+
+        /// <summary>
         /// First HalfEdge incident to this Vertex.
         /// </summary>
-        public HalfEdge OutgoingHalfEdge {
+        public HalfEdge HalfEdge {
             get
             {
                 if (TriangleMesh != null && _halfEdgeIndex > -1 && _halfEdgeIndex < TriangleMesh.HalfEdges.Count)
@@ -70,28 +89,28 @@ namespace HalfEdgeDataStructure
         /// Is the Vertex on the Border or not.
         /// </summary>
         public bool IsOnBorder {
-            get { return IncidentHalfEdges.Any(he => he.IsOnBorder); }
+            get { return HalfEdges.Any(he => he.IsOnBorder); }
         }
 
         /// <summary>
-        /// All Vertices ajdacent to this Vertex (i.e. directly connected via a HalfEdge) in Clockwise manner.
+        /// All Vertices ajdacent to this Vertex (i.e. directly connected via a <see cref="HalfEdge"/>) in Counter Clockwise manner.
         /// </summary>
-        public IEnumerable<Vertex> NeighborVertices {
+        public IEnumerable<Vertex> Vertices {
             get
             {
-                foreach(var incidentHalfEdge in IncidentHalfEdges)
+                foreach(var incidentHalfEdge in HalfEdges)
                     yield return incidentHalfEdge.EndVertex;
             }
         }
 
         /// <summary>
-        /// All HalfEdges with this Vertex as StartPoint.
+        /// All HalfEdges with this Vertex as <see cref="HalfEdge.StartVertex"/> in Counter Clockwise manner.
         /// </summary>
-        public IEnumerable<HalfEdge> IncidentHalfEdges {
+        public IEnumerable<HalfEdge> HalfEdges {
             get
             {
-                var currentHalfEdge = OutgoingHalfEdge;
-                if(OutgoingHalfEdge != default(HalfEdge))
+                var currentHalfEdge = HalfEdge;
+                if(HalfEdge != default(HalfEdge))
                 {
                     var firstHalfEdge = currentHalfEdge;
                     do
@@ -106,12 +125,28 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// All Triangles adjacent to this Vertex in Counter Clockwise manner.
+        /// </summary>
+        public IEnumerable<Triangle> Triangles {
+            get
+            {
+                foreach(var halfEdge in HalfEdges)
+                {
+                    if(halfEdge.Triangle != null)
+                        yield return halfEdge.Triangle;
+                }
+            }
+        }
+
+        /// <summary>
         /// Default Constructor, calls the Base Constructor.
         /// </summary>
         public Vertex()
             :base()
         {
             _position = new Double3();
+            _textureCoordinate = new Double3();
+            _normal = new Vector();
             _halfEdgeIndex = -1;
         }
 
@@ -122,9 +157,44 @@ namespace HalfEdgeDataStructure
         /// <param name="y">Y Position of the Vertex.</param>
         /// <param name="z">Z Position of the Vertex.</param>
         public Vertex(double x, double y, double z)
-            :this()
+            : this()
         {
             _position = new Double3(x, y, z);
+            _textureCoordinate = new Double3();
+            _normal = new Vector();
+        }
+
+        /// <summary>
+        /// Constructor with Position and TextureCoordinate Values.
+        /// </summary>
+        /// <param name="x">X Position of the Vertex.</param>
+        /// <param name="y">Y Position of the Vertex.</param>
+        /// <param name="z">Z Position of the Vertex.</param>
+        /// <param name="u">U TextureCoordinate of the Vertex.</param>
+        /// <param name="v">V TextureCoordinate of the Vertex.</param>
+        /// <param name="w">W TextureCoordinate of the Vertex.</param>
+        public Vertex(double x, double y, double z, double u, double v, double w)
+            : this(x, y, z)
+        {
+            _textureCoordinate = new Double3(u, v, w);
+        }
+
+        /// <summary>
+        /// Constructor with Position and TextureCoordinate Values.
+        /// </summary>
+        /// <param name="x">X Position of the Vertex.</param>
+        /// <param name="y">Y Position of the Vertex.</param>
+        /// <param name="z">Z Position of the Vertex.</param>
+        /// <param name="u">U TextureCoordinate of the Vertex.</param>
+        /// <param name="v">V TextureCoordinate of the Vertex.</param>
+        /// <param name="w">W TextureCoordinate of the Vertex.</param>
+        /// <param name="nx">X Direction of the Normal of the Vertex.</param>
+        /// <param name="ny">Y Direction of the Normal of the Vertex.</param>
+        /// <param name="nz">Z Direction of the Normal of the Vertex.</param>
+        public Vertex(double x, double y, double z, double u, double v, double w, double nx, double ny, double nz)
+            : this(x, y, z, u, v, w)
+        {
+            _normal = new Vector(nx, ny, nz);
         }
 
         /// <summary>
@@ -132,8 +202,32 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="position">The Position of the Vertex.</param>
         public Vertex(Double3 position)
-            :this(position.X, position.Y, position.Z)
+            :this()
         {
+            _position = position;
+        }
+
+        /// <summary>
+        /// Constructor with Position and TextureCoordinate Values.
+        /// </summary>
+        /// <param name="position">The Position of the Vertex.</param>
+        /// <param name="textureCoordinate">The TextureCoordinate of the Vertex.</param>
+        public Vertex(Double3 position, Double3 textureCoordinate)
+            : this(position)
+        {
+            _textureCoordinate = textureCoordinate;
+        }
+
+        /// <summary>
+        /// Constructor with Position and TextureCoordinate Values.
+        /// </summary>
+        /// <param name="position">The Position of the Vertex.</param>
+        /// <param name="textureCoordinate">The TextureCoordinate of the Vertex.</param>
+        /// <param name="normal">The Normal of the Vertex.</param>
+        public Vertex(Double3 position, Double3 textureCoordinate, Vector normal)
+            : this(position, textureCoordinate)
+        {
+            _normal = normal;
         }
 
         /// <summary>
@@ -150,11 +244,49 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// Constructor with the HalfEdgeMesh and Position Values.
+        /// </summary>
+        /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
+        /// <param name="x">X Position of the Vertex.</param>
+        /// <param name="y">Y Position of the Vertex.</param>
+        /// <param name="z">Z Position of the Vertex.</param>
+        /// <param name="u">U TextureCoordinate of the Vertex.</param>
+        /// <param name="v">V TextureCoordinate of the Vertex.</param>
+        /// <param name="w">W TextureCoordinate of the Vertex.</param>
+        public Vertex(HalfEdgeMesh triangleMesh, double x, double y, double z, double u, double v, double w)
+            : this(x, y, z, u, v, w)
+        {
+            TriangleMesh = triangleMesh;
+        }
+
+
+        /// <summary>
+        /// Constructor with the HalfEdgeMesh and Position Values.
+        /// </summary>
+        /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
+        /// <param name="x">X Position of the Vertex.</param>
+        /// <param name="y">Y Position of the Vertex.</param>
+        /// <param name="z">Z Position of the Vertex.</param>
+        /// <param name="u">U TextureCoordinate of the Vertex.</param>
+        /// <param name="v">V TextureCoordinate of the Vertex.</param>
+        /// <param name="w">W TextureCoordinate of the Vertex.</param>
+        /// <param name="nx">X Direction of the Normal of the Vertex.</param>
+        /// <param name="ny">Y Direction of the Normal of the Vertex.</param>
+        /// <param name="nz">Z Direction of the Normal of the Vertex.</param>
+        public Vertex(HalfEdgeMesh triangleMesh, double x, double y, double z, double u, double v, double w, double nx, double ny, double nz)
+            : this(x, y, z, u, v, w, nx, ny, nz)
+        {
+            TriangleMesh = triangleMesh;
+        }
+
+        /// <summary>
         /// Constructor that uses an existing Vertex to create a new Vertex.
         /// </summary>
         /// <param name="vertex">Existing Vertex.</param>
         public Vertex(Vertex vertex)
-            :this(vertex.TriangleMesh, vertex.X, vertex.Y, vertex.Z)
+            :this(vertex.TriangleMesh, vertex.X, vertex.Y, vertex.Z,
+                 vertex.TextureCoordinate.U, vertex.TextureCoordinate.V, vertex.TextureCoordinate.W,
+                 vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z)
         { }
 
         /// <summary>
@@ -175,6 +307,8 @@ namespace HalfEdgeDataStructure
             TriangleMesh = (HalfEdgeMesh)info.GetValue("HalfEdgeMesh", typeof(HalfEdgeMesh));
             Index = -1;
             _position = (Double3)info.GetValue("Position", typeof(Double3));
+            _textureCoordinate = (Double3)info.GetValue("TextureCoordinate", typeof(Double3));
+            _normal = (Vector)info.GetValue("Normal", typeof(Vector));
             _halfEdgeIndex = -1;
         }
 
@@ -197,6 +331,8 @@ namespace HalfEdgeDataStructure
         {
             info.AddValue("HalfEdgeMesh", TriangleMesh, typeof(HalfEdgeMesh));
             info.AddValue("Position", Position, typeof(Double3));
+            info.AddValue("TextureCoordinate", TextureCoordinate, typeof(Double3));
+            info.AddValue("Normal", Normal, typeof(Vector));
         }
 
         /// <summary>
@@ -206,7 +342,7 @@ namespace HalfEdgeDataStructure
         /// <returns>A HalfEdge from this Vertex to the <paramref name="other"/> Vertex, if it exists. Null otherwise.</returns>
         public HalfEdge HalfEdgeTo(Vertex other)
         {
-            foreach(var incidentHalfEdge in IncidentHalfEdges)
+            foreach(var incidentHalfEdge in HalfEdges)
             {
                 if (incidentHalfEdge.EndVertex == other)
                     return incidentHalfEdge;
@@ -226,6 +362,25 @@ namespace HalfEdgeDataStructure
         {
             return new Vector(end.X - start.X, end.Y - start.Y, end.Z - start.Z);
         }
+
+        /// <summary>
+        /// Implicitly create a Vector from the <see cref="Position"/> of a Vertex.
+        /// </summary>
+        /// <param name="vertex"></param>
+        public static implicit operator Vector(Vertex vertex)
+        {
+            return new Vector(vertex.Position);
+        }
+
+        /// <summary>
+        /// Implicitly create a Double3 from the <see cref="Position"/> of a Vertex.
+        /// </summary>
+        /// <param name="vertex"></param>
+        public static implicit operator Double3(Vertex vertex)
+        {
+            return new Double3(vertex.Position);
+        }
+
 
         /// <summary>
         /// Creates a String Representation of this Vertex.

@@ -43,7 +43,7 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
-        /// The Indices of the Vertices of this HalfEdge.
+        /// The Indices of the Vertices of this HalfEdge (first Index of the <see cref="StartVertex"/> then Index of the <see cref="EndVertex"/>).
         /// </summary>
         public int[] VertexIndizes {
             get
@@ -57,6 +57,27 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// The Vertices of this HalfEdge (first <see cref="StartVertex"/> then <see cref="EndVertex"/>).
+        /// </summary>
+        public Vertex[] Vertices {
+            get
+            {
+                return new Vertex[]
+                {
+                    StartVertex,
+                    EndVertex
+                };
+            }
+        }
+
+        /// <summary>
+        /// The Length of the HalfEdge.
+        /// </summary>
+        public double Length {
+            get { return _length; }
+        }
+
+        /// <summary>
         /// The Triangle this HalfEdge belongs to.
         /// </summary>
         public Triangle Triangle {
@@ -66,6 +87,41 @@ namespace HalfEdgeDataStructure
                     return TriangleMesh.Triangles[_triangleIndex];
 
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// The Triangle of the opposite HalfEdge of this HalfEdge.
+        /// </summary>
+        public Triangle OppositeTriangle {
+            get { return OppositeHalfEdge.Triangle; }
+        }
+
+        /// <summary>
+        /// The <see cref="Triangle"/> of this HalfEdge and the Triangle of it's <see cref="OppositeHalfEdge"/>.
+        /// </summary>
+        public Triangle[] Triangles {
+            get
+            {
+                return new Triangle[]
+                {
+                    Triangle,
+                    OppositeTriangle
+                };
+            }
+        }
+
+        /// <summary>
+        /// The Angle between the two adjacent <see cref="Triangles"/> of this HalfEdge if possible.
+        /// </summary>
+        public double Angle {
+            get
+            {
+                var triangles = Triangles;
+                if(triangles[0] == null || triangles[1] == null)
+                    return 0;
+
+                return Vector.CalculateAngle(triangles[0].Normal, triangles[1].Normal);
             }
         }
 
@@ -137,13 +193,6 @@ namespace HalfEdgeDataStructure
         /// </summary>
         public int PreviousHalfEdgeIndex {
             set { _previousHalfEdgeIndex = value; }
-        }
-
-        /// <summary>
-        /// The Length of the HalfEdge.
-        /// </summary>
-        public double Length {
-            get { return _length; }
         }
 
         /// <summary>

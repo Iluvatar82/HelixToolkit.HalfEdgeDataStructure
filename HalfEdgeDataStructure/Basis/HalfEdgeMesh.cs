@@ -72,6 +72,26 @@ namespace HalfEdgeDataStructure
             }
         }
 
+        /// <summary>
+        /// Is the HalfEdgeMesh completely closed or not.
+        /// </summary>
+        public bool IsClosed {
+            get { return BoundaryPoints.Count() == 0; }
+        }
+
+        /// <summary>
+        /// The Volume of the HalfEdgeMesh if it is closed.
+        /// </summary>
+        public Double Volume {
+            get
+            {
+                if(!IsClosed)
+                    return 0;
+
+                return Math.Abs(_triangles.Select(t => t.SignedVolume).Sum());
+            }
+        }
+
 
         /// <summary>
         /// Default Constructor.
@@ -167,7 +187,7 @@ namespace HalfEdgeDataStructure
             triangle.Index = _triangles.Count;
             _triangles.Add(triangle);
 
-            HandleHalfEdges(triangle);
+            AddTriangleToHalfEdge(triangle);
         }
 
         /// <summary>
@@ -181,13 +201,34 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// Remove a Triangle from the HalfEdgeMesh <see cref="Triangles"/>.
+        /// </summary>
+        /// <param name="triangle">The Triangle to remove.</param>
+        public void RemoveTriangle(Triangle triangle)
+        {
+            _triangles.Remove(triangle);
+
+            RemoveTrianlgeFromHalfEdge(triangle);
+        }
+
+        /// <summary>
+        /// Remove Triangles from the HalfEdgeMesh <see cref="Triangles"/>.
+        /// </summary>
+        /// <param name="triangles">The Triangles to remove.</param>
+        public void RemoveTriangles(IEnumerable<Triangle> triangles)
+        {
+            foreach(var triangle in triangles)
+                RemoveTriangle(triangle);
+        }
+
+        /// <summary>
         /// Handle the HalfEdges of the HalfEdgeMesh when a Triangle is added to it.
         /// </summary>
-        /// <param name="triangle">The Triangle that was added to the <see cref="Triangles"/> of the HalfEdgeMesh..</param>
-        private void HandleHalfEdges(Triangle triangle)
+        /// <param name="triangle">The Triangle that was added to the <see cref="Triangles"/> of the HalfEdgeMesh.</param>
+        private void AddTriangleToHalfEdge(Triangle triangle)
         {
             var foundPointIndicesWithHalfEdges = new List<int>(triangle.VertexIndizes
-                .Select(p => _vertices[p].OutgoingHalfEdge).Where(he => he != null).Select(he => he.StartVertex.Index));
+                .Select(p => _vertices[p].HalfEdge).Where(he => he != null).Select(he => he.StartVertex.Index));
             var foundExistingHalfEdges = triangle.ExistingHalfEdgesBetweenVertices.ToList();
 
             ///Create 6 HalfEdges
@@ -226,7 +267,7 @@ namespace HalfEdgeDataStructure
                 if(foundPointIndicesWithHalfEdges.Count == 1)
                 {
                     ///Correct for the already attached Vertex
-                    incidentBorderHalfEdge1 = _vertices[attachedPointIndex].IncidentHalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
+                    incidentBorderHalfEdge1 = _vertices[attachedPointIndex].HalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
                     adjacentBorderHalfEdge1 = incidentBorderHalfEdge1.PreviousHalfEdge;
                     adjacentBorderHalfEdge1.NextHalfEdgeIndex = halfEdgeCount + 5;
                     incidentBorderHalfEdge1.PreviousHalfEdgeIndex = halfEdgeCount + 1;
@@ -234,8 +275,8 @@ namespace HalfEdgeDataStructure
                 else if (foundPointIndicesWithHalfEdges.Count == 2)
                 {
                     ///Correct for the already attached Vertex
-                    incidentBorderHalfEdge1 = _vertices[triangle.Vertex2.Index].IncidentHalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
-                    incidentBorderHalfEdge2 = _vertices[triangle.Vertex3.Index].IncidentHalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
+                    incidentBorderHalfEdge1 = _vertices[triangle.Vertex2.Index].HalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
+                    incidentBorderHalfEdge2 = _vertices[triangle.Vertex3.Index].HalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
                     adjacentBorderHalfEdge1 = incidentBorderHalfEdge1.PreviousHalfEdge;
                     adjacentBorderHalfEdge2 = incidentBorderHalfEdge2.PreviousHalfEdge;
                     adjacentBorderHalfEdge1.NextHalfEdgeIndex = halfEdgeCount + 1;
@@ -333,7 +374,7 @@ namespace HalfEdgeDataStructure
                 else
                 {
                     ///Correct for the already attached Vertex
-                    incidentBorderHalfEdge0 = _vertices[triangle.Vertex1.Index].IncidentHalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
+                    incidentBorderHalfEdge0 = _vertices[triangle.Vertex1.Index].HalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
                     adjacentBorderHalfEdge0 = incidentBorderHalfEdge0.PreviousHalfEdge;
                     incidentBorderHalfEdge2 = halfEdge2.NextHalfEdge;
                     adjacentBorderHalfEdge1 = halfEdge2.PreviousHalfEdge;
@@ -440,6 +481,34 @@ namespace HalfEdgeDataStructure
                 ///Set Face Properties
                 triangle.HalfEdgeIndex = halfEdgeCount;
             }
+        }
+
+        /// <summary>
+        /// Handle the HalfEdges of the HalfEdgeMesh when a Triangle is removed from it.
+        /// </summary>
+        /// <param name="triangle">The Triangle that was removed from the <see cref="Triangles"/> of the HalfEdgeMesh.</param>
+        private void RemoveTrianlgeFromHalfEdge(Triangle triangle)
+        {
+            ///TODO implement and Test
+        }
+
+        /// <summary>
+        /// Calculate the Vertex Normals for the HalfEdgeMesh.
+        /// </summary>
+        public void CalculateVertexNormals()
+        {
+            ///TODO implement and Test
+        }
+
+        /// <summary>
+        /// Calculates the Silhouette of the HalfEdgeMesh for a given Position.
+        /// </summary>
+        /// <param name="position">The Position to calculate the Silhouette for.</param>
+        /// <returns>List of HalfEdge Lists because a Mesh can have more than one Silhouette.</returns>
+        public List<List<HalfEdge>> CalculateSilhouette(Vector position)
+        {
+            ///TODO implement and Test
+            return null;
         }
     }
 }

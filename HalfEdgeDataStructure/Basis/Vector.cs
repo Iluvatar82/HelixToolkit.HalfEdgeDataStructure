@@ -163,6 +163,15 @@ namespace HalfEdgeDataStructure
             return new Vector(0, 0, 0);
         }
 
+        /// <summary>
+        /// Create a Vector pointing to 1 / 1 / 1.
+        /// </summary>
+        /// <returns>New Vector.</returns>
+        public static Vector One()
+        {
+            return new Vector(1, 1, 1);
+        }
+
 
         /// <summary>
         /// Clone this Vector and return a Copy of it.
@@ -204,21 +213,9 @@ namespace HalfEdgeDataStructure
                 return;
 
             X /= _length;
-            Z /= _length;
+            Y /= _length;
             Z /= _length;
             UpdateLengthInformation();
-        }
-
-        /// <summary>
-        /// Calculate the Angle between two Vectors <paramref name="first"/> and <paramref name="second"/>.
-        /// The Vectors don't need to be normalized.
-        /// </summary>
-        /// <param name="first">The first Vector.</param>
-        /// <param name="second">The second Vector.</param>
-        /// <returns>Angle between the two Vectors in Radians.</returns>
-        public static double AngleBetweenVectors(Vector first, Vector second)
-        {
-            return Math.Acos(Dot(first, second) / (first.Length * second.Length));
         }
 
         /// <summary>
@@ -244,10 +241,46 @@ namespace HalfEdgeDataStructure
         /// <returns>Scalar Product of the two Vectors.</returns>
         public static double Dot(Vector first, Vector second)
         {
-            var firstToUse = first;
-            var secondToUse = second;
+            return first.X * second.X + first.Y * second.Y + first.Z * second.Z;
+        }
 
-            return firstToUse.X * secondToUse.X + firstToUse.Y * secondToUse.Y + firstToUse.Z * secondToUse.Z;
+        /// <summary>
+        /// Calculate the Angle between two Vectors <paramref name="first"/> and <paramref name="second"/>.
+        /// The Vectors don't need to be normalized.
+        /// </summary>
+        /// <param name="first">The first Vector.</param>
+        /// <param name="second">The second Vector.</param>
+        /// <returns>Angle between the two Vectors in Radians.</returns>
+        public static double CalculateAngle(Vector first, Vector second)
+        {
+            return Math.Acos(Dot(first, second) / (first.Length * second.Length));
+        }
+
+        /// <summary>
+        /// Project a Vector to a Plane defined by it's Normal Vector.
+        /// </summary>
+        /// <param name="vector">The Vector to project.</param>
+        /// <param name="normal">The Normal Vector of the Plane to project the Vector on.</param>
+        /// <returns></returns>
+        public static Vector ProjectOntoPlane(Vector vector, Vector normal)
+        {
+            normal.Normalize();
+            var normalVectorVN = Cross(normal, vector);
+            normalVectorVN.Normalize();
+            var projectionVector = Cross(normalVectorVN, normal);
+            return ProjectOntoVector(vector, projectionVector);
+        }
+
+        /// <summary>
+        /// Project a Vector to another Vector.
+        /// </summary>
+        /// <param name="vector">The Vector to project.</param>
+        /// <param name="other">The Vector to project onto.</param>
+        /// <returns></returns>
+        public static Vector ProjectOntoVector(Vector vector, Vector other)
+        {
+            other.Normalize();
+            return Dot(vector, other) * other;
         }
 
 
@@ -332,6 +365,25 @@ namespace HalfEdgeDataStructure
 
             return new Vector(vector.X / divisor, vector.Y / divisor, vector.Z / divisor);
         }
+
+        /// <summary>
+        /// Implicitly create a Vertex from the <see cref="Direction"/> of a Vector.
+        /// </summary>
+        /// <param name="vertex"></param>
+        public static implicit operator Vertex(Vector vector)
+        {
+            return new Vertex(vector.Direction);
+        }
+
+        /// <summary>
+        /// Implicitly create a Double3 from the <see cref="Direction"/> of a Vector.
+        /// </summary>
+        /// <param name="vertex"></param>
+        public static implicit operator Double3(Vector vector)
+        {
+            return new Double3(vector.Direction);
+        }
+
 
 
         /// <summary>

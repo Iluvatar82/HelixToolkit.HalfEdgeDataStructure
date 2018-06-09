@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace HalfEdgeDataStructure
@@ -73,15 +74,60 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// The Vertices of this Triangle (first <see cref="Vertex1"/>, <see cref="Vertex2"/> then <see cref="Vertex3"/>).
+        /// </summary>
+        public Vertex[] Vertices {
+            get
+            {
+                return new Vertex[]
+                {
+                    Vertex1,
+                    Vertex2,
+                    Vertex3
+                };
+            }
+        }
+
+        /// <summary>
         /// First HalfEdge incident to this Triangle.
         /// </summary>
-        public HalfEdge OutgoingHalfEdge {
+        public HalfEdge HalfEdge {
             get
             {
                 if(TriangleMesh != null && _halfEdgeIndex > -1 && _halfEdgeIndex < TriangleMesh.HalfEdges.Count)
                     return TriangleMesh.HalfEdges[_halfEdgeIndex];
 
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// All HalfEdges of this Triangle.
+        /// </summary>
+        public HalfEdge[] HalfEdges {
+            get
+            {
+                return new HalfEdge[]
+                {
+                    HalfEdge,
+                    HalfEdge.NextHalfEdge,
+                    HalfEdge.PreviousHalfEdge
+                };
+            }
+        }
+
+        /// <summary>
+        /// All adjacent Triangles of this Triangle.
+        /// </summary>
+        public Triangle[] Triangles {
+            get
+            {
+                return new Triangle[]
+                {
+                    HalfEdge.OppositeTriangle,
+                    HalfEdge.NextHalfEdge.OppositeTriangle,
+                    HalfEdge.PreviousHalfEdge.OppositeTriangle
+                };
             }
         }
 
@@ -126,6 +172,19 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// The signed Volume of the Triangle.
+        /// </summary>
+        public double SignedVolume {
+            get
+            {
+                if(TriangleMesh == null)
+                    return 0;
+
+                return Vector.Dot(Vertex1, Vector.Cross(Vertex2, Vertex3)) / 6.0;
+            }
+        }
+
+        /// <summary>
         /// Reference to the TriangleMesh.
         /// </summary>
         public override HalfEdgeMesh TriangleMesh {
@@ -142,11 +201,7 @@ namespace HalfEdgeDataStructure
         /// Is the Triangle on the Border or not.
         /// </summary>
         public bool IsOnBorder {
-            get
-            {
-                return OutgoingHalfEdge.IsOnBorder || OutgoingHalfEdge.NextHalfEdge.IsOnBorder ||
-                    OutgoingHalfEdge.PreviousHalfEdge.IsOnBorder;
-            }
+            get { return HalfEdge.IsOnBorder || HalfEdge.NextHalfEdge.IsOnBorder || HalfEdge.PreviousHalfEdge.IsOnBorder; }
         }
 
 
@@ -279,6 +334,18 @@ namespace HalfEdgeDataStructure
                 _vertexIndex3 = tempIndex;
             }
         }
+
+        /// <summary>
+        /// The Angle between the two adjacent <see cref="Triangles"/> if the Triangle <paramref name="triangle"/> is adjacent to this Triangle.
+        /// </summary>
+        public double AngleTo(Triangle triangle)
+        {
+            if(!Triangles.Contains(triangle))
+                return 0;
+
+            return HalfEdges.First(he => he.Triangles[1] == triangle).Angle;
+        }
+
 
         /// <summary>
         /// Creates a String Representation of this Triangle.
