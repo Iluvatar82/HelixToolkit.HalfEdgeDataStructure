@@ -15,7 +15,7 @@ namespace Helper
         private static readonly double Offset = 0.0001;
         private static readonly Color DefaultForegroundColor = Colors.White;
         private static readonly Color DefaultBackgroundColor = Colors.LightYellow;
-        private static readonly Color DefaultHighlightColor = Colors.Red;
+        private static readonly Color DefaultHighlightColor = Colors.Orange;
 
         /// <summary>
         /// Create a MeshVisual3D from an existing HalfEdgeMesh with specified Colors.
@@ -24,21 +24,12 @@ namespace Helper
         /// <param name="foreground">The Color for the Triangles of the Mesh.</param>
         /// <param name="backGround">The Background Color for the Triangles of the Mesh.</param>
         /// <returns></returns>
-        public static HelixToolkit.Wpf.MeshVisual3D CreateMeshVisual3D(this HalfEdgeMesh mesh, Color foreground, Color backGround)
+        public static HelixToolkit.Wpf.MeshVisual3D CreateMeshVisual3D(this HalfEdgeMesh mesh, Material frontMaterial, Material backMaterial)
         {
-            if(foreground == default(Color))
-                foreground = DefaultForegroundColor;
-            if(backGround == default(Color))
-                backGround = DefaultBackgroundColor;
-
-            var frontMaterial = new DiffuseMaterial()
-            {
-                Brush = new SolidColorBrush(foreground)
-            };
-            var backMaterial = new DiffuseMaterial()
-            {
-                Brush = new SolidColorBrush(backGround)
-            };
+            if(frontMaterial == default(Material))
+                frontMaterial = new DiffuseMaterial(new SolidColorBrush(DefaultForegroundColor));
+            if(backMaterial == default(Material))
+                backMaterial = new DiffuseMaterial(new SolidColorBrush(DefaultBackgroundColor));
 
             HelixToolkit.Wpf.Mesh3D mesh3D = new HelixToolkit.Wpf.Mesh3D(mesh.Vertices.Select(p => new Point3D(p.X, p.Y, p.Z)), mesh.Triangles.SelectMany(t => t.VertexIndizes));
             HelixToolkit.Wpf.MeshVisual3D meshVisual = new HelixToolkit.Wpf.MeshVisual3D()

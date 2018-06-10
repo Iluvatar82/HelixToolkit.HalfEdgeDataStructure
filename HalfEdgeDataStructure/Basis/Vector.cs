@@ -50,7 +50,12 @@ namespace HalfEdgeDataStructure
         /// Length of the Vector.
         /// </summary>
         public double Length {
-            get { return _length; }
+            get {
+                if(_length == -1)
+                    UpdateLengthInformation();
+
+                return _length;
+            }
             set { _length = value; }
         }
 
@@ -58,7 +63,12 @@ namespace HalfEdgeDataStructure
         /// Squared Length of the Vector.
         /// </summary>
         public double LengthSquared {
-            get { return _lengthSquared; }
+            get {
+                if(_length == -1)
+                    UpdateLengthInformation();
+
+                return _lengthSquared;
+            }
             set { _lengthSquared = value; }
         }
 
@@ -72,9 +82,11 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public Vector()
+        private Vector()
         {
             _direction = new Double3();
+            _length = -1;
+            _lengthSquared = -1;
         }
 
         /// <summary>
@@ -84,10 +96,9 @@ namespace HalfEdgeDataStructure
         /// <param name="y">Y Direction of the Vertex.</param>
         /// <param name="z">Z Direction of the Vertex.</param>
         public Vector(double x, double y, double z)
+            :this()
         {
             _direction = new Double3(x, y, z);
-
-            UpdateLengthInformation();
         }
 
         /// <summary>
@@ -123,8 +134,6 @@ namespace HalfEdgeDataStructure
         public Vector(SerializationInfo info, StreamingContext context)
         {
             _direction = (Double3)info.GetValue("Direction", typeof(Double3));
-
-            UpdateLengthInformation();
         }
 
         /// <summary>
@@ -206,16 +215,18 @@ namespace HalfEdgeDataStructure
         /// </summary>
         public void Normalize()
         {
-            if(_length == 0.0)
+            if(Length == 0.0)
                 return;
 
-            if(_length == 1.0)
+            if(Length == 1.0)
                 return;
 
             X /= _length;
             Y /= _length;
             Z /= _length;
-            UpdateLengthInformation();
+
+            _lengthSquared = 1.0;
+            _length = 1.0;
         }
 
         /// <summary>

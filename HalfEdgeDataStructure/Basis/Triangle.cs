@@ -23,39 +23,21 @@ namespace HalfEdgeDataStructure
         /// First Vertex of this Triangle.
         /// </summary>
         public Vertex Vertex1 {
-            get
-            {
-                if(TriangleMesh != null && _vertexIndex1 > -1 && _vertexIndex1 < TriangleMesh.Vertices.Count)
-                    return TriangleMesh.Vertices[_vertexIndex1];
-
-                return null;
-            }
+            get { return TriangleMesh.Vertices[_vertexIndex1]; }
         }
 
         /// <summary>
         /// Second Vertex of this Triangle.
         /// </summary>
         public Vertex Vertex2 {
-            get
-            {
-                if(TriangleMesh != null && _vertexIndex2 > -1 && _vertexIndex2 < TriangleMesh.Vertices.Count)
-                    return TriangleMesh.Vertices[_vertexIndex2];
-
-                return null;
-            }
+            get { return TriangleMesh.Vertices[_vertexIndex2]; }
         }
 
         /// <summary>
         /// Third Vertex of this Triangle.
         /// </summary>
         public Vertex Vertex3 {
-            get
-            {
-                if(TriangleMesh != null && _vertexIndex3 > -1 && _vertexIndex3 < TriangleMesh.Vertices.Count)
-                    return TriangleMesh.Vertices[_vertexIndex3];
-
-                return null;
-            }
+            get { return TriangleMesh.Vertices[_vertexIndex3]; }
         }
 
         /// <summary>
@@ -94,10 +76,10 @@ namespace HalfEdgeDataStructure
         public HalfEdge HalfEdge {
             get
             {
-                if(TriangleMesh != null && _halfEdgeIndex > -1 && _halfEdgeIndex < TriangleMesh.HalfEdges.Count)
-                    return TriangleMesh.HalfEdges[_halfEdgeIndex];
+                if(_halfEdgeIndex == -1)
+                    return null;
 
-                return null;
+                return TriangleMesh.HalfEdges[_halfEdgeIndex];
             }
         }
 
@@ -134,18 +116,21 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// All HalfEdges that exist between the three Vertices.
         /// </summary>
-        public IEnumerable<HalfEdge> ExistingHalfEdgesBetweenVertices {
+        public List<HalfEdge> ExistingHalfEdgesBetweenVertices {
             get
             {
-                var result = Vertex1.HalfEdgeTo(Vertex2);
-                if(result != null)
-                    yield return result;
-                result = Vertex2.HalfEdgeTo(Vertex3);
-                if(result != null)
-                    yield return result;
-                result = Vertex3.HalfEdgeTo(Vertex1);
-                if(result != null)
-                    yield return result;
+                var result = new List<HalfEdge>();
+                var found = Vertex1.HalfEdgeTo(Vertex2);
+                if(found != null)
+                    result.Add(found);
+                found = Vertex2.HalfEdgeTo(Vertex3);
+                if(found != null)
+                    result.Add(found);
+                found = Vertex3.HalfEdgeTo(Vertex1);
+                if(found != null)
+                    result.Add(found);
+
+                return result;
             }
         }
 
@@ -160,15 +145,25 @@ namespace HalfEdgeDataStructure
         /// The Normal of this Triangle.
         /// </summary>
         public Vector Normal {
-            get { return _normal; }
-            set { _normal = value; }
+            get {
+                if(_normal == default(Vector))
+                    Calculate();
+
+                return _normal;
+            }
+            private set { _normal = value; }
         }
 
         /// <summary>
         /// The Area of this Triangle.
         /// </summary>
         public double Area {
-            get { return _area; }
+            get {
+                if(_area == -1)
+                    Calculate();
+
+                return _area;
+            }
         }
 
         /// <summary>
@@ -185,19 +180,6 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
-        /// Reference to the TriangleMesh.
-        /// </summary>
-        public override HalfEdgeMesh TriangleMesh {
-            get { return base.TriangleMesh; }
-            set {
-                base.TriangleMesh = value;
-
-                if(value != null)
-                    Calculate();
-            }
-        }
-
-        /// <summary>
         /// Is the Triangle on the Border or not.
         /// </summary>
         public bool IsOnBorder {
@@ -208,7 +190,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Default Constructor, calls the Base Constructor.
         /// </summary>
-        public Triangle()
+        private Triangle()
             :base()
         {
             _vertexIndex1 = -1;
@@ -216,8 +198,8 @@ namespace HalfEdgeDataStructure
             _vertexIndex3 = -1;
             _halfEdgeIndex = -1;
 
-            _normal = new Vector();
-            _area = 0;
+            _normal = default(Vector);
+            _area = -1;
         }
 
         /// <summary>
@@ -246,9 +228,6 @@ namespace HalfEdgeDataStructure
             :this(vertex1, vertex2, vertex3)
         {
             TriangleMesh = triangleMesh;
-
-            if (TriangleMesh != null)
-                Calculate();
         }
 
         /// <summary>
@@ -272,8 +251,6 @@ namespace HalfEdgeDataStructure
             _vertexIndex2 = (int)info.GetValue("VertexIndex2", typeof(int));
             _vertexIndex3 = (int)info.GetValue("VertexIndex3", typeof(int));
             _halfEdgeIndex = -1;
-
-            Calculate();
         }
 
 

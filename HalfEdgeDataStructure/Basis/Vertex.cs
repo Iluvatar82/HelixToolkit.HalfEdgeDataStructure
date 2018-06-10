@@ -71,10 +71,10 @@ namespace HalfEdgeDataStructure
         public HalfEdge HalfEdge {
             get
             {
-                if (TriangleMesh != null && _halfEdgeIndex > -1 && _halfEdgeIndex < TriangleMesh.HalfEdges.Count)
-                    return TriangleMesh.HalfEdges[_halfEdgeIndex];
+                if(_halfEdgeIndex == -1)
+                    return null;
 
-                return null;
+                return TriangleMesh.HalfEdges[_halfEdgeIndex];
             }
         }
 
@@ -110,6 +110,7 @@ namespace HalfEdgeDataStructure
             get
             {
                 var currentHalfEdge = HalfEdge;
+
                 if(HalfEdge != default(HalfEdge))
                 {
                     var firstHalfEdge = currentHalfEdge;
@@ -141,12 +142,12 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Default Constructor, calls the Base Constructor.
         /// </summary>
-        public Vertex()
+        private Vertex()
             :base()
         {
             _position = new Double3();
             _textureCoordinate = new Double3();
-            _normal = new Vector();
+            _normal = new Vector(0, 0, 0);
             _halfEdgeIndex = -1;
         }
 
@@ -161,7 +162,7 @@ namespace HalfEdgeDataStructure
         {
             _position = new Double3(x, y, z);
             _textureCoordinate = new Double3();
-            _normal = new Vector();
+            _normal = new Vector(0, 0, 0);
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ namespace HalfEdgeDataStructure
     public class HalfEdge : AbstractMeshElement, ICloneable
     {
         private int _startVertexIndex;
+        private int _endVertexIndex;
         private int _triangleIndex;
         private double _length;
         private int _nextHalfEdgeIndex;
@@ -19,27 +20,14 @@ namespace HalfEdgeDataStructure
         /// The Start Vertex of this HalfEdge.
         /// </summary>
         public Vertex StartVertex {
-            get
-            {
-                if(TriangleMesh != null && _startVertexIndex > -1 && _startVertexIndex < TriangleMesh.Vertices.Count)
-                    return TriangleMesh.Vertices[_startVertexIndex];
-
-                return null;
-            }
+            get { return TriangleMesh.Vertices[_startVertexIndex]; }
         }
 
         /// <summary>
         /// The End Vertex of this HalfEdge.
         /// </summary>
         public Vertex EndVertex {
-            get
-            {
-                var opposite = OppositeHalfEdge;
-                if(TriangleMesh != null && opposite != null)
-                    return opposite.StartVertex;
-
-                return null;
-            }
+            get { return TriangleMesh.Vertices[_endVertexIndex]; }
         }
 
         /// <summary>
@@ -51,7 +39,7 @@ namespace HalfEdgeDataStructure
                 return new int[]
                 {
                     _startVertexIndex,
-                    EndVertex.Index
+                    _endVertexIndex
                 };
             }
         }
@@ -74,7 +62,12 @@ namespace HalfEdgeDataStructure
         /// The Length of the HalfEdge.
         /// </summary>
         public double Length {
-            get { return _length; }
+            get {
+                if(_length == -1)
+                    Calculate();
+
+                return _length;
+            }
         }
 
         /// <summary>
@@ -83,10 +76,10 @@ namespace HalfEdgeDataStructure
         public Triangle Triangle {
             get
             {
-                if(TriangleMesh != null && _triangleIndex > -1 && _triangleIndex < TriangleMesh.Triangles.Count)
-                    return TriangleMesh.Triangles[_triangleIndex];
+                if(_triangleIndex == -1)
+                    return null;
 
-                return null;
+                return TriangleMesh.Triangles[_triangleIndex];
             }
         }
 
@@ -137,13 +130,7 @@ namespace HalfEdgeDataStructure
         /// It's <see cref="StartVertex"/> is the <see cref="EndVertex"/> of this HalfEdge and it's <see cref="Triangle"/> is the same.
         /// </summary>
         public HalfEdge NextHalfEdge {
-            get
-            {
-                if(TriangleMesh != null && _nextHalfEdgeIndex > -1 && _nextHalfEdgeIndex < TriangleMesh.HalfEdges.Count)
-                    return TriangleMesh.HalfEdges[_nextHalfEdgeIndex];
-
-                return null;
-            }
+            get { return TriangleMesh.HalfEdges[_nextHalfEdgeIndex]; }
         }
 
         /// <summary>
@@ -160,10 +147,10 @@ namespace HalfEdgeDataStructure
         public HalfEdge OppositeHalfEdge {
             get
             {
-                if(TriangleMesh != null && _oppositeHalfeEdgeIndex > -1 && _oppositeHalfeEdgeIndex < TriangleMesh.HalfEdges.Count)
-                    return TriangleMesh.HalfEdges[_oppositeHalfeEdgeIndex];
+                if(_oppositeHalfeEdgeIndex == -1)
+                    return null;
 
-                return null;
+                return TriangleMesh.HalfEdges[_oppositeHalfeEdgeIndex];
             }
         }
 
@@ -179,13 +166,7 @@ namespace HalfEdgeDataStructure
         /// It's <see cref="EndVertex"/> is the <see cref="StartVertex"/> of this HalfEdge and it's <see cref="Triangle"/> is the same.
         /// </summary>
         public HalfEdge PreviousHalfEdge {
-            get
-            {
-                if(TriangleMesh != null && _previousHalfEdgeIndex > -1 && _previousHalfEdgeIndex < TriangleMesh.HalfEdges.Count)
-                    return TriangleMesh.HalfEdges[_previousHalfEdgeIndex];
-
-                return null;
-            }
+            get { return TriangleMesh.HalfEdges[_previousHalfEdgeIndex]; }
         }
 
         /// <summary>
@@ -193,20 +174,6 @@ namespace HalfEdgeDataStructure
         /// </summary>
         public int PreviousHalfEdgeIndex {
             set { _previousHalfEdgeIndex = value; }
-        }
-
-        /// <summary>
-        /// Reference to the TriangleMesh.
-        /// </summary>
-        public override HalfEdgeMesh TriangleMesh {
-            get { return base.TriangleMesh; }
-            set
-            {
-                base.TriangleMesh = value;
-
-                if(value != null)
-                    Calculate();
-            }
         }
 
         /// <summary>
@@ -221,11 +188,12 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Default Constructor, calls the Base Constructor.
         /// </summary>
-        public HalfEdge()
+        private HalfEdge()
             :base()
         {
             _startVertexIndex = -1;
-            _length = 0;
+            _endVertexIndex = -1;
+            _length = -1;
             _triangleIndex = -1;
             _nextHalfEdgeIndex = -1;
             _previousHalfEdgeIndex = -1;
@@ -236,10 +204,12 @@ namespace HalfEdgeDataStructure
         /// Constructor with the Index of the <see cref="StartVertex"/>.
         /// </summary>
         /// <param name="startIndex">Index of the <see cref="StartVertex"/>.</param>
-        public HalfEdge(int startIndex)
+        /// <param name="endIndex">Index of the <see cref="EndVertex"/>.</param>
+        public HalfEdge(int startIndex, int endIndex)
             :this()
         {
             _startVertexIndex = startIndex;
+            _endVertexIndex = endIndex;
         }
 
         /// <summary>
@@ -248,13 +218,11 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="triangleMesh">The HalfEdgeMesh this HalfEdge belongs to.</param>
         /// <param name="startIndex">Index of the <see cref="StartVertex"/>.</param>
-        public HalfEdge(HalfEdgeMesh triangleMesh, int startIndex)
-            :this(startIndex)
+        /// <param name="endIndex">Index of the <see cref="EndVertex"/>.</param>
+        public HalfEdge(HalfEdgeMesh triangleMesh, int startIndex, int endIndex)
+            :this(startIndex, endIndex)
         {
             TriangleMesh = triangleMesh;
-
-            if(TriangleMesh != null)
-                Calculate();
         }
 
         /// <summary>
@@ -263,9 +231,10 @@ namespace HalfEdgeDataStructure
         /// <param name="triangleMesh">The HalfEdgeMesh this HalfEdge belongs to.</param>
         /// <param name="index">The Index of this HalfEdge in the HalfEdgeMesh.</param>
         /// <param name="startIndex">Index of the <see cref="StartVertex"/>.</param>
+        /// <param name="endIndex">Index of the <see cref="EndVertex"/>.</param>
         /// <param name="triangleIndex">The Index of the Triangle this HalfEdge belongs to.</param>
-        public HalfEdge(HalfEdgeMesh triangleMesh, int index, int startIndex, int triangleIndex)
-            :this(triangleMesh, startIndex)
+        public HalfEdge(HalfEdgeMesh triangleMesh, int index, int startIndex, int endIndex, int triangleIndex)
+            :this(triangleMesh, startIndex, endIndex)
         {
             Index = index;
             _triangleIndex = triangleIndex;
@@ -276,7 +245,7 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="triangle">Existing HalfEdge.</param>
         public HalfEdge(HalfEdge halfEdge)
-            : this(halfEdge.TriangleMesh, halfEdge._startVertexIndex)
+            : this(halfEdge.TriangleMesh, halfEdge._startVertexIndex, halfEdge._endVertexIndex)
         { }
 
 

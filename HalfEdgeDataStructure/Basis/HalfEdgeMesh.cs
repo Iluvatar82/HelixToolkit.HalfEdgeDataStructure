@@ -227,56 +227,64 @@ namespace HalfEdgeDataStructure
         /// <param name="triangle">The Triangle that was added to the <see cref="Triangles"/> of the HalfEdgeMesh.</param>
         private void AddTriangleToHalfEdge(Triangle triangle)
         {
-            var foundPointIndicesWithHalfEdges = new List<int>(triangle.VertexIndizes
-                .Select(p => _vertices[p].HalfEdge).Where(he => he != null).Select(he => he.StartVertex.Index));
-            var foundExistingHalfEdges = triangle.ExistingHalfEdgesBetweenVertices.ToList();
+            var foundPointIndicesWithHalfEdges = new List<int>();
+            if(triangle.Vertex1.HalfEdge != null)
+                foundPointIndicesWithHalfEdges.Add(triangle.Vertex1.Index);
+            if(triangle.Vertex2.HalfEdge != null)
+                foundPointIndicesWithHalfEdges.Add(triangle.Vertex2.Index);
+            if(triangle.Vertex3.HalfEdge != null)
+                foundPointIndicesWithHalfEdges.Add(triangle.Vertex3.Index);
+            var foundPointsWithHalfEdgesCount = foundPointIndicesWithHalfEdges.Count;
+
+            var foundExistingHalfEdges = triangle.ExistingHalfEdgesBetweenVertices;
+            var foundExistingHalfEdgesCount = foundExistingHalfEdges.Count;
 
             ///Create 6 HalfEdges
-            if (foundPointIndicesWithHalfEdges.Count <= 1 || foundPointIndicesWithHalfEdges.Count == 2 && foundExistingHalfEdges.Count == 0)
+            if (foundPointsWithHalfEdgesCount <= 1 || foundPointsWithHalfEdgesCount == 2 && foundExistingHalfEdgesCount == 0)
             {
                 var attachedPointIndex = 0;
-                if(foundPointIndicesWithHalfEdges.Count == 1)
+                if(foundPointsWithHalfEdgesCount == 1)
                 {
-                    attachedPointIndex = foundPointIndicesWithHalfEdges[0];
+                    attachedPointIndex = foundPointIndicesWithHalfEdges.ElementAt(0);
                     triangle.SetFirstPointIndex(attachedPointIndex);
                 }
-                else if(foundPointIndicesWithHalfEdges.Count == 2)
+                else if(foundPointsWithHalfEdgesCount == 2)
                     triangle.SetFirstPointIndex(triangle.VertexIndizes.First(p => !foundPointIndicesWithHalfEdges.Contains(p)));
 
                 ///Create HalfEdges and Add
                 var halfEdgeCount = _halfEdges.Count;
-                var halfEdge1 = new HalfEdge(this, halfEdgeCount, triangle.Vertex1.Index, triangle.Index);
+                var halfEdge1 = new HalfEdge(this, halfEdgeCount, triangle.Vertex1.Index, triangle.Vertex2.Index, triangle.Index);
                 _halfEdges.Add(halfEdge1);
-                var halfEdge1Opposite = new HalfEdge(this, halfEdgeCount + 1, triangle.Vertex2.Index, -1);
+                var halfEdge1Opposite = new HalfEdge(this, halfEdgeCount + 1, triangle.Vertex2.Index, triangle.Vertex1.Index, -1);
                 _halfEdges.Add(halfEdge1Opposite);
 
-                var halfEdge2 = new HalfEdge(this, halfEdgeCount + 2, triangle.Vertex2.Index, triangle.Index);
+                var halfEdge2 = new HalfEdge(this, halfEdgeCount + 2, triangle.Vertex2.Index, triangle.Vertex3.Index, triangle.Index);
                 _halfEdges.Add(halfEdge2);
-                var halfEdge2Opposite = new HalfEdge(this, halfEdgeCount + 3, triangle.Vertex3.Index, -1);
+                var halfEdge2Opposite = new HalfEdge(this, halfEdgeCount + 3, triangle.Vertex3.Index, triangle.Vertex2.Index, -1);
                 _halfEdges.Add(halfEdge2Opposite);
 
-                var halfEdge3 = new HalfEdge(this, halfEdgeCount + 4, triangle.Vertex3.Index, triangle.Index);
+                var halfEdge3 = new HalfEdge(this, halfEdgeCount + 4, triangle.Vertex3.Index, triangle.Vertex1.Index, triangle.Index);
                 _halfEdges.Add(halfEdge3);
-                var halfEdge3Opposite = new HalfEdge(this, halfEdgeCount + 5, triangle.Vertex1.Index, -1);
+                var halfEdge3Opposite = new HalfEdge(this, halfEdgeCount + 5, triangle.Vertex1.Index, triangle.Vertex3.Index, -1);
                 _halfEdges.Add(halfEdge3Opposite);
 
                 HalfEdge incidentBorderHalfEdge1 = null;
                 HalfEdge incidentBorderHalfEdge2 = null;
                 HalfEdge adjacentBorderHalfEdge1 = null;
                 HalfEdge adjacentBorderHalfEdge2 = null;
-                if(foundPointIndicesWithHalfEdges.Count == 1)
+                if(foundPointsWithHalfEdgesCount == 1)
                 {
                     ///Correct for the already attached Vertex
-                    incidentBorderHalfEdge1 = _vertices[attachedPointIndex].HalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
+                    incidentBorderHalfEdge1 = _vertices[attachedPointIndex].HalfEdges.First(he => he.Triangle == null);
                     adjacentBorderHalfEdge1 = incidentBorderHalfEdge1.PreviousHalfEdge;
                     adjacentBorderHalfEdge1.NextHalfEdgeIndex = halfEdgeCount + 5;
                     incidentBorderHalfEdge1.PreviousHalfEdgeIndex = halfEdgeCount + 1;
                 }
-                else if (foundPointIndicesWithHalfEdges.Count == 2)
+                else if (foundPointsWithHalfEdgesCount == 2)
                 {
                     ///Correct for the already attached Vertex
-                    incidentBorderHalfEdge1 = _vertices[triangle.Vertex2.Index].HalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
-                    incidentBorderHalfEdge2 = _vertices[triangle.Vertex3.Index].HalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
+                    incidentBorderHalfEdge1 = _vertices[triangle.Vertex2.Index].HalfEdges.First(he => he.Triangle == null);
+                    incidentBorderHalfEdge2 = _vertices[triangle.Vertex3.Index].HalfEdges.First(he => he.Triangle == null);
                     adjacentBorderHalfEdge1 = incidentBorderHalfEdge1.PreviousHalfEdge;
                     adjacentBorderHalfEdge2 = incidentBorderHalfEdge2.PreviousHalfEdge;
                     adjacentBorderHalfEdge1.NextHalfEdgeIndex = halfEdgeCount + 1;
@@ -310,14 +318,14 @@ namespace HalfEdgeDataStructure
                 halfEdge3Opposite.OppositeHalfEdgeIndex = halfEdgeCount + 4;
                 halfEdge3Opposite.PreviousHalfEdgeIndex = halfEdgeCount + 1;
 
-                if(foundPointIndicesWithHalfEdges.Count == 1)
+                if(foundPointsWithHalfEdgesCount == 1)
                 {
                     ///Set HalfEdge Properties
                     halfEdge1Opposite.NextHalfEdgeIndex = incidentBorderHalfEdge1.Index;
 
                     halfEdge3Opposite.PreviousHalfEdgeIndex = adjacentBorderHalfEdge1.Index;
                 }
-                else if(foundPointIndicesWithHalfEdges.Count == 2)
+                else if(foundPointsWithHalfEdgesCount == 2)
                 {
                     ///Set HalfEdge Properties
                     halfEdge1Opposite.PreviousHalfEdgeIndex = adjacentBorderHalfEdge1.Index;
@@ -329,9 +337,9 @@ namespace HalfEdgeDataStructure
                 }
 
                 ///Set Vertex Properties
-                if(foundPointIndicesWithHalfEdges.Count != 1)
+                if(foundPointsWithHalfEdgesCount != 1)
                     _vertices[triangle.Vertex1.Index].HalfEdgeIndex = halfEdgeCount;
-                if(foundPointIndicesWithHalfEdges.Count <= 1)
+                if(foundPointsWithHalfEdgesCount <= 1)
                 {
                     _vertices[triangle.Vertex2.Index].HalfEdgeIndex = halfEdgeCount + 2;
                     _vertices[triangle.Vertex3.Index].HalfEdgeIndex = halfEdgeCount + 4;
@@ -341,29 +349,29 @@ namespace HalfEdgeDataStructure
                 triangle.HalfEdgeIndex = halfEdgeCount;
             }
             ///Create 4 HalfEdges
-            else if(foundExistingHalfEdges.Count == 1)
+            else if(foundExistingHalfEdgesCount == 1)
             {
                 triangle.SetFirstPointIndex(triangle.VertexIndizes.First(p => !foundExistingHalfEdges.ElementAt(0).VertexIndizes.Contains(p)));
 
                 ///Create HalfEdges and Add
                 var halfEdgeCount = _halfEdges.Count;
-                var halfEdge1 = new HalfEdge(this, halfEdgeCount, triangle.Vertex1.Index, triangle.Index);
+                var halfEdge1 = new HalfEdge(this, halfEdgeCount, triangle.Vertex1.Index, triangle.Vertex2.Index, triangle.Index);
                 _halfEdges.Add(halfEdge1);
-                var halfEdge1Opposite = new HalfEdge(this, halfEdgeCount + 1, triangle.Vertex2.Index, -1);
+                var halfEdge1Opposite = new HalfEdge(this, halfEdgeCount + 1, triangle.Vertex2.Index, triangle.Vertex1.Index, -1);
                 _halfEdges.Add(halfEdge1Opposite);
 
                 var halfEdge2 = foundExistingHalfEdges.ElementAt(0);
 
-                var halfEdge3 = new HalfEdge(this, halfEdgeCount + 2, triangle.Vertex3.Index, triangle.Index);
+                var halfEdge3 = new HalfEdge(this, halfEdgeCount + 2, triangle.Vertex3.Index, triangle.Vertex1.Index, triangle.Index);
                 _halfEdges.Add(halfEdge3);
-                var halfEdge3Opposite = new HalfEdge(this, halfEdgeCount + 3, triangle.Vertex1.Index, -1);
+                var halfEdge3Opposite = new HalfEdge(this, halfEdgeCount + 3, triangle.Vertex1.Index, triangle.Vertex3.Index, -1);
                 _halfEdges.Add(halfEdge3Opposite);
 
                 HalfEdge incidentBorderHalfEdge0 = null;
                 HalfEdge adjacentBorderHalfEdge0 = null;
                 HalfEdge incidentBorderHalfEdge2 = null;
                 HalfEdge adjacentBorderHalfEdge1 = null;
-                if(foundPointIndicesWithHalfEdges.Count == 2)
+                if(foundPointsWithHalfEdgesCount == 2)
                 {
                     ///Correct for the already attached Vertex
                     incidentBorderHalfEdge2 = halfEdge2.NextHalfEdge;
@@ -374,7 +382,7 @@ namespace HalfEdgeDataStructure
                 else
                 {
                     ///Correct for the already attached Vertex
-                    incidentBorderHalfEdge0 = _vertices[triangle.Vertex1.Index].HalfEdges.First(he => he.Triangle == null && he.IsOnBorder);
+                    incidentBorderHalfEdge0 = _vertices[triangle.Vertex1.Index].HalfEdges.First(he => he.Triangle == null);
                     adjacentBorderHalfEdge0 = incidentBorderHalfEdge0.PreviousHalfEdge;
                     incidentBorderHalfEdge2 = halfEdge2.NextHalfEdge;
                     adjacentBorderHalfEdge1 = halfEdge2.PreviousHalfEdge;
@@ -404,13 +412,13 @@ namespace HalfEdgeDataStructure
                 halfEdge3Opposite.OppositeHalfEdgeIndex = halfEdgeCount + 2;
                 halfEdge3Opposite.PreviousHalfEdgeIndex = halfEdgeCount + 1;
 
-                if(foundPointIndicesWithHalfEdges.Count == 3)
+                if(foundPointsWithHalfEdgesCount == 3)
                 {
                     halfEdge1Opposite.NextHalfEdgeIndex = incidentBorderHalfEdge0.Index;
                     halfEdge3Opposite.PreviousHalfEdgeIndex = adjacentBorderHalfEdge0.Index;
                 }
 
-                if(foundPointIndicesWithHalfEdges.Count == 2)
+                if(foundPointsWithHalfEdgesCount == 2)
                     _vertices[triangle.Vertex1.Index].HalfEdgeIndex = halfEdgeCount;
 
                 ///Set HalfEdge Properties
@@ -420,7 +428,7 @@ namespace HalfEdgeDataStructure
                 triangle.HalfEdgeIndex = halfEdgeCount;
             }
             ///Create 2 HalfEdges
-            else if(foundExistingHalfEdges.Count == 2)
+            else if(foundExistingHalfEdgesCount == 2)
             {
                     triangle.SetFirstPointIndex(foundPointIndicesWithHalfEdges.First(p => foundExistingHalfEdges.All(f => f.VertexIndizes.Contains(p))));
 
@@ -428,9 +436,9 @@ namespace HalfEdgeDataStructure
                     var halfEdgeCount = _halfEdges.Count;
                     var halfEdge1 = foundExistingHalfEdges.First(he => he.StartVertex.Index == triangle.Vertex1.Index);
 
-                    var halfEdge2 = new HalfEdge(this, halfEdgeCount, triangle.Vertex2.Index, triangle.Index);
+                    var halfEdge2 = new HalfEdge(this, halfEdgeCount, triangle.Vertex2.Index, triangle.Vertex3.Index, triangle.Index);
                     _halfEdges.Add(halfEdge2);
-                    var halfEdge2Opposite = new HalfEdge(this, halfEdgeCount + 1, triangle.Vertex3.Index, -1);
+                    var halfEdge2Opposite = new HalfEdge(this, halfEdgeCount + 1, triangle.Vertex3.Index, triangle.Vertex2.Index, -1);
                     _halfEdges.Add(halfEdge2Opposite);
 
                     var halfEdge3 = halfEdge1.PreviousHalfEdge;
@@ -468,8 +476,8 @@ namespace HalfEdgeDataStructure
             {
                 ///Set HalfEdge Properties
                 var halfEdgeCount = _halfEdges.Count;
-                var halfEdge1 = foundExistingHalfEdges.First(he => he.Triangle == null &&
-                    he.IsOnBorder && he.StartVertex.Index == triangle.Vertex1.Index);
+                var halfEdge1 = foundExistingHalfEdges.First(he => he.Triangle == null
+                    && he.StartVertex.Index == triangle.Vertex1.Index);
                 var halfEdge2 = halfEdge1.NextHalfEdge;
                 var halfEdge3 = halfEdge2.NextHalfEdge;
 
