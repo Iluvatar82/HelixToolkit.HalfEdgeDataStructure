@@ -38,7 +38,7 @@ namespace Helper
         /// <returns>The generated HalfEdgeMesh.</returns>
         public static HalfEdgeMesh GenerateHalfEdgeTests()
         {
-            var points = new List<Vertex> {
+            var vertices = new List<Vertex> {
                 new Vertex(0, 0, 0), new Vertex(2, 0, 0), new Vertex(1, 1, 0),
                 new Vertex(4, 0, 0), new Vertex(3, 1, 0),
                 new Vertex(2, 2, 0),
@@ -59,7 +59,7 @@ namespace Helper
                 new Triangle(4, 7, 6)
             };
 
-            return new HalfEdgeMesh(points, triangles);
+            return new HalfEdgeMesh(vertices, triangles);
         }
 
         /// <summary>
@@ -68,21 +68,22 @@ namespace Helper
         /// <param name="origin">The Origin of the Cube.</param>
         /// <param name="size">The Size of the Cube.</param>
         /// <param name="sides">Defines which Sides of the Cube should be generated (default = All Sides).</param>
+        /// <param name="calculateNormals">Calculate Vertex Normals or not.</param>
         /// <returns>The generated HalfEdgeMesh.</returns>
-        public static HalfEdgeMesh GenerateCube(Vector origin, double size = 1, CubeSides sides = CubeSides.All)
+        public static HalfEdgeMesh GenerateCube(Vector origin,
+            double size = 1, CubeSides sides = CubeSides.All, bool calculateNormals = false)
         {
-            var points = new List<Vertex>()
+            var vertices = new List<Vertex>()
             {
-                new Vertex(0, 0, 0),
-                new Vertex(1, 0 ,0),
-                new Vertex(1, 1 ,0),
-                new Vertex(0, 1 ,0),
-                new Vertex(0, 0, 1),
-                new Vertex(1, 0 ,1),
-                new Vertex(1, 1 ,1),
-                new Vertex(0, 1 ,1),
+                new Vertex(origin.X, origin.Y, origin.Z),
+                new Vertex(1 * size + origin.X, origin.Y, origin.Z),
+                new Vertex(1 * size + origin.X, 1 * size + origin.Y, origin.Z),
+                new Vertex(origin.X, 1 * size + origin.Y , origin.Z),
+                new Vertex(origin.X, origin.Y, 1 * size + origin.Z),
+                new Vertex(1 * size + origin.X, origin.Y, 1 * size + origin.Z),
+                new Vertex(1 * size + origin.X, 1 * size + origin.Y ,1 * size + origin.Z),
+                new Vertex(origin.X, 1 * size + origin.Y ,1 * size + origin.Z),
             };
-            points = points.Select(p => new Vertex(new Vector(p) * size + origin)).ToList();
 
             var triangles = new List<Triangle>();
             if(sides.HasFlag(CubeSides.NegativeZ))
@@ -116,7 +117,11 @@ namespace Helper
                 triangles.Add(new Triangle(3, 4, 7));
             }
 
-            return new HalfEdgeMesh(points, triangles);
+            var mesh = new HalfEdgeMesh(vertices, triangles);
+            if(calculateNormals)
+                mesh.CalculateVertexNormals();
+
+            return mesh;
         }
 
         /// <summary>
@@ -125,22 +130,24 @@ namespace Helper
         /// <param name="center">The Center of the Sphere.</param>
         /// <param name="radius">The Radius of the Sphere.</param>
         /// <param name="numSides">Number of Sides of the Sphere (multiply by 4 for one Ring).</param>
-        /// <param name="sphereSides">Which Sides of the Sphere should be generated.</param>
+        /// <param name="sides">Which Sides of the Sphere should be generated.</param>
+        /// <param name="calculateNormals">Calculate Vertex Normals or not.</param>
         /// <returns>The generated HalfEdgeMesh.</returns>
-        public static HalfEdgeMesh GenerateSphere(Vector center, double radius = 1, int numSides = 8, CubeSides sphereSides = CubeSides.All)
+        public static HalfEdgeMesh GenerateSphere(Vector center,
+            double radius = 1, int numSides = 8, CubeSides sides = CubeSides.All, bool calculateNormals = false)
         {
             var shiftVector = Vector.One() * 0.5;
             var mesh = new HalfEdgeMesh();
             var sideLength = 1.0 / numSides;
-            var pointPerSide = numSides + 1;
+            var verticesPerSide = numSides + 1;
             var vertices = new List<Vertex>();
 
-            var bottomPoints = new List<Vertex>(pointPerSide * pointPerSide);
-            var topPoints = new List<Vertex>(pointPerSide * pointPerSide);
-            var frontPoints = new List<Vertex>(pointPerSide * pointPerSide);
-            var backPoints = new List<Vertex>(pointPerSide * pointPerSide);
-            var leftPoints = new List<Vertex>(pointPerSide * pointPerSide);
-            var rightPoints = new List<Vertex>(pointPerSide * pointPerSide);
+            var bottomVertices = new List<Vertex>(verticesPerSide * verticesPerSide);
+            var topVertices = new List<Vertex>(verticesPerSide * verticesPerSide);
+            var frontVertices = new List<Vertex>(verticesPerSide * verticesPerSide);
+            var backVertices = new List<Vertex>(verticesPerSide * verticesPerSide);
+            var leftVertices = new List<Vertex>(verticesPerSide * verticesPerSide);
+            var rightVertices = new List<Vertex>(verticesPerSide * verticesPerSide);
             var idx = 0;
             for(int z = 0; z <= numSides; z++)
             {
@@ -154,20 +161,20 @@ namespace Helper
                             {
                                 Index = idx,
                             };
-                            if(x == 0 && sphereSides.HasFlag(CubeSides.NegativeZ))
-                                bottomPoints.Add(vertex);
-                            else if(x == numSides && sphereSides.HasFlag(CubeSides.PositiveZ))
-                                topPoints.Add(vertex);
+                            if(x == 0 && sides.HasFlag(CubeSides.NegativeZ))
+                                bottomVertices.Add(vertex);
+                            else if(x == numSides && sides.HasFlag(CubeSides.PositiveZ))
+                                topVertices.Add(vertex);
 
-                            if(y == 0 && sphereSides.HasFlag(CubeSides.NegativeY))
-                                frontPoints.Add(vertex);
-                            else if(y == numSides && sphereSides.HasFlag(CubeSides.PositiveY))
-                                backPoints.Add(vertex);
+                            if(y == 0 && sides.HasFlag(CubeSides.NegativeY))
+                                frontVertices.Add(vertex);
+                            else if(y == numSides && sides.HasFlag(CubeSides.PositiveY))
+                                backVertices.Add(vertex);
 
-                            if(z == 0 && sphereSides.HasFlag(CubeSides.NegativeX))
-                                leftPoints.Add(vertex);
-                            else if(z == numSides && sphereSides.HasFlag(CubeSides.PositiveX))
-                                rightPoints.Add(vertex);
+                            if(z == 0 && sides.HasFlag(CubeSides.NegativeX))
+                                leftVertices.Add(vertex);
+                            else if(z == numSides && sides.HasFlag(CubeSides.PositiveX))
+                                rightVertices.Add(vertex);
 
                             vertices.Add(vertex);
                             idx++;
@@ -184,7 +191,7 @@ namespace Helper
                 vertexVector.Normalize();
                 vertex.Position = vertexVector * radius + center;
             }
-            mesh.AddPoints(vertices);
+            mesh.AddVertices(vertices);
 
             var triangles = new List<Triangle>();
             for(int i = 0; i < numSides * numSides; i++)
@@ -193,42 +200,45 @@ namespace Helper
                 var nextIdx = idx + 1;
                 var nextRowIdx = nextIdx + numSides;
                 var nextRowNextIdx = nextRowIdx + 1;
-                if(sphereSides.HasFlag(CubeSides.NegativeZ))
+                if(sides.HasFlag(CubeSides.NegativeZ))
                 {
-                    mesh.AddTriangle(new Triangle(bottomPoints[idx].Index, bottomPoints[nextRowNextIdx].Index, bottomPoints[nextIdx].Index));
-                    mesh.AddTriangle(new Triangle(bottomPoints[idx].Index, bottomPoints[nextRowIdx].Index, bottomPoints[nextRowNextIdx].Index));
+                    mesh.AddTriangle(new Triangle(bottomVertices[idx].Index, bottomVertices[nextRowNextIdx].Index, bottomVertices[nextIdx].Index));
+                    mesh.AddTriangle(new Triangle(bottomVertices[idx].Index, bottomVertices[nextRowIdx].Index, bottomVertices[nextRowNextIdx].Index));
                 }
 
-                if(sphereSides.HasFlag(CubeSides.PositiveZ))
+                if(sides.HasFlag(CubeSides.PositiveZ))
                 {
-                    mesh.AddTriangle(new Triangle(topPoints[idx].Index, topPoints[nextIdx].Index, topPoints[nextRowNextIdx].Index));
-                    mesh.AddTriangle(new Triangle(topPoints[idx].Index, topPoints[nextRowNextIdx].Index, topPoints[nextRowIdx].Index));
+                    mesh.AddTriangle(new Triangle(topVertices[idx].Index, topVertices[nextIdx].Index, topVertices[nextRowNextIdx].Index));
+                    mesh.AddTriangle(new Triangle(topVertices[idx].Index, topVertices[nextRowNextIdx].Index, topVertices[nextRowIdx].Index));
                 }
 
-                if(sphereSides.HasFlag(CubeSides.NegativeY))
+                if(sides.HasFlag(CubeSides.NegativeY))
                 {
-                    mesh.AddTriangle(new Triangle(frontPoints[idx].Index, frontPoints[nextIdx].Index, frontPoints[nextRowNextIdx].Index));
-                    mesh.AddTriangle(new Triangle(frontPoints[idx].Index, frontPoints[nextRowNextIdx].Index, frontPoints[nextRowIdx].Index));
+                    mesh.AddTriangle(new Triangle(frontVertices[idx].Index, frontVertices[nextIdx].Index, frontVertices[nextRowNextIdx].Index));
+                    mesh.AddTriangle(new Triangle(frontVertices[idx].Index, frontVertices[nextRowNextIdx].Index, frontVertices[nextRowIdx].Index));
                 }
 
-                if(sphereSides.HasFlag(CubeSides.PositiveY))
+                if(sides.HasFlag(CubeSides.PositiveY))
                 {
-                    mesh.AddTriangle(new Triangle(backPoints[idx].Index, backPoints[nextRowNextIdx].Index, backPoints[nextIdx].Index));
-                    mesh.AddTriangle(new Triangle(backPoints[idx].Index, backPoints[nextRowIdx].Index, backPoints[nextRowNextIdx].Index));
+                    mesh.AddTriangle(new Triangle(backVertices[idx].Index, backVertices[nextRowNextIdx].Index, backVertices[nextIdx].Index));
+                    mesh.AddTriangle(new Triangle(backVertices[idx].Index, backVertices[nextRowIdx].Index, backVertices[nextRowNextIdx].Index));
                 }
 
-                if(sphereSides.HasFlag(CubeSides.NegativeX))
+                if(sides.HasFlag(CubeSides.NegativeX))
                 {
-                    mesh.AddTriangle(new Triangle(leftPoints[idx].Index, leftPoints[nextRowNextIdx].Index, leftPoints[nextIdx].Index));
-                    mesh.AddTriangle(new Triangle(leftPoints[idx].Index, leftPoints[nextRowIdx].Index, leftPoints[nextRowNextIdx].Index));
+                    mesh.AddTriangle(new Triangle(leftVertices[idx].Index, leftVertices[nextRowNextIdx].Index, leftVertices[nextIdx].Index));
+                    mesh.AddTriangle(new Triangle(leftVertices[idx].Index, leftVertices[nextRowIdx].Index, leftVertices[nextRowNextIdx].Index));
                 }
 
-                if(sphereSides.HasFlag(CubeSides.PositiveX))
+                if(sides.HasFlag(CubeSides.PositiveX))
                 {
-                    mesh.AddTriangle(new Triangle(rightPoints[idx].Index, rightPoints[nextIdx].Index, rightPoints[nextRowNextIdx].Index));
-                    mesh.AddTriangle(new Triangle(rightPoints[idx].Index, rightPoints[nextRowNextIdx].Index, rightPoints[nextRowIdx].Index));
+                    mesh.AddTriangle(new Triangle(rightVertices[idx].Index, rightVertices[nextIdx].Index, rightVertices[nextRowNextIdx].Index));
+                    mesh.AddTriangle(new Triangle(rightVertices[idx].Index, rightVertices[nextRowNextIdx].Index, rightVertices[nextRowIdx].Index));
                 }
             }
+
+            if (calculateNormals)
+                mesh.CalculateVertexNormals();
 
             return mesh;
         }
@@ -237,17 +247,25 @@ namespace Helper
         /// Generate a HalfEdgeMesh from an existing MeshGeometry3D Object.
         /// </summary>
         /// <param name="meshGeometry">The existing MeshGeometry3D Object.</param>
+        /// <param name="calculateNormals">Calculate Vertex Normals or not.</param>
         /// <returns>The generated HalfEdgeMesh.</returns>
-        public static HalfEdgeMesh GenerateFromMeshGeometry3D(MeshGeometry3D meshGeometry)
+        public static HalfEdgeMesh GenerateFromMeshGeometry3D(MeshGeometry3D meshGeometry, bool calculateNormals = false)
         {
-            var points = meshGeometry.Positions.Select(p => new Vertex(p.X, p.Y, p.Z)).ToList();
+            var vertices = meshGeometry.Positions.Select(p => new Vertex(p.X, p.Y, p.Z)).ToList();
             var triangles = new List<Triangle>();
             for(int i = 0; i < meshGeometry.TriangleIndices.Count; i += 3)
                 triangles.Add(new Triangle(meshGeometry.TriangleIndices.ElementAt(i),
                     meshGeometry.TriangleIndices.ElementAt(i + 1),
                     meshGeometry.TriangleIndices.ElementAt(i + 2)));
 
-            return new HalfEdgeMesh(points, triangles);
+            var mesh = new HalfEdgeMesh();
+            mesh.AddVertices(vertices);
+            mesh.AddTriangles(triangles);
+
+            if(calculateNormals)
+                mesh.CalculateVertexNormals();
+
+            return mesh;
         }
     }
 }

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Basis\AbstractMeshElement.cs" />
     <Compile Include="Basis\BaseStructs.cs" />
+    <Compile Include="Basis\Comparer\VectorComparer.cs" />
     <Compile Include="Basis\HalfEdge.cs" />
     <Compile Include="Basis\HalfEdgeMesh.cs" />
     <Compile Include="Basis\Triangle.cs" />
@@ -49,5 +50,6 @@
     <Compile Include="Basis\Vertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

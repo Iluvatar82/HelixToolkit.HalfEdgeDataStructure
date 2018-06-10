@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace HalfEdgeDataStructure
@@ -64,8 +65,8 @@ namespace HalfEdgeDataStructure
         /// </summary>
         public double LengthSquared {
             get {
-                if(_length == -1)
-                    UpdateLengthInformation();
+                if(_lengthSquared == -1)
+                    UpdateLengthSquared();
 
                 return _lengthSquared;
             }
@@ -206,8 +207,16 @@ namespace HalfEdgeDataStructure
         /// </summary>
         private void UpdateLengthInformation()
         {
-            _lengthSquared = X * X + Y * Y + Z * Z;
+            UpdateLengthSquared();
             _length = Math.Sqrt(_lengthSquared);
+        }
+
+        /// <summary>
+        /// Calculate the squared Lenght Information of this Vector.
+        /// </summary>
+        private void UpdateLengthSquared()
+        {
+            _lengthSquared = X * X + Y * Y + Z * Z;
         }
 
         /// <summary>

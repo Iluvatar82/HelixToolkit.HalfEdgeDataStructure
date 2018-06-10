@@ -126,7 +126,7 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
-        /// All Triangles adjacent to this Vertex in Counter Clockwise manner.
+        /// All existing Triangles adjacent to this Vertex in Counter Clockwise manner.
         /// </summary>
         public IEnumerable<Triangle> Triangles {
             get
@@ -145,9 +145,9 @@ namespace HalfEdgeDataStructure
         private Vertex()
             :base()
         {
-            _position = new Double3();
-            _textureCoordinate = new Double3();
-            _normal = new Vector(0, 0, 0);
+            _position = default(Double3);
+            _textureCoordinate = default(Double3);
+            _normal = null;
             _halfEdgeIndex = -1;
         }
 
@@ -161,8 +161,6 @@ namespace HalfEdgeDataStructure
             : this()
         {
             _position = new Double3(x, y, z);
-            _textureCoordinate = new Double3();
-            _normal = new Vector(0, 0, 0);
         }
 
         /// <summary>
@@ -281,13 +279,49 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// Constructor with the HalfEdgeMesh and Position Values.
+        /// </summary>
+        /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
+        /// <param name="position">The Position of the Vertex.</param>
+        public Vertex(HalfEdgeMesh triangleMesh, Double3 position)
+            : this(position)
+        {
+            TriangleMesh = triangleMesh;
+        }
+
+        /// <summary>
+        /// Constructor with the HalfEdgeMesh and Position Values.
+        /// </summary>
+        /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
+        /// <param name="position">The Position of the Vertex.</param>
+        /// <param name="textureCoordinate">The TextureCoordinate of the Vertex.</param>
+        public Vertex(HalfEdgeMesh triangleMesh, Double3 position, Double3 textureCoordinate)
+            : this(triangleMesh, position)
+        {
+            _textureCoordinate = textureCoordinate;
+        }
+
+
+        /// <summary>
+        /// Constructor with the HalfEdgeMesh and Position Values.
+        /// </summary>
+        /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
+        /// <param name="position">The Position of the Vertex.</param>
+        /// <param name="textureCoordinate">The TextureCoordinate of the Vertex.</param>
+        /// <param name="normal">The Normal of the Vertex.</param>
+        public Vertex(HalfEdgeMesh triangleMesh, Double3 position, Double3 textureCoordinate, Vector normal)
+            : this (triangleMesh, position, textureCoordinate)
+        {
+            _normal = normal;
+        }
+
+
+        /// <summary>
         /// Constructor that uses an existing Vertex to create a new Vertex.
         /// </summary>
         /// <param name="vertex">Existing Vertex.</param>
         public Vertex(Vertex vertex)
-            :this(vertex.TriangleMesh, vertex.X, vertex.Y, vertex.Z,
-                 vertex.TextureCoordinate.U, vertex.TextureCoordinate.V, vertex.TextureCoordinate.W,
-                 vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z)
+            :this(vertex.TriangleMesh, vertex.Position, vertex.TextureCoordinate, vertex.Normal)
         { }
 
         /// <summary>

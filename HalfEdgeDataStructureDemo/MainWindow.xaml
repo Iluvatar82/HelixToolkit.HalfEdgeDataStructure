@@ -7,7 +7,17 @@
         mc:Ignorable="d"
         Title="HalfEdge Demo" Height="450" Width="800" WindowState="Maximized">
     <Grid>
-        <helix:HelixViewport3D x:Name="ViewPort" RotateAroundMouseDownPoint="True" ZoomAroundMouseDownPoint="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu x:Name="Menu" Grid.Row="0">
+            <MenuItem x:Name="File" Header="File">
+                <MenuItem x:Name="LoadDemoSceneMenuItem" Header="Load Demo Scene" Click="LoadDemoSceneMenuItem_Click"></MenuItem>
+                <MenuItem x:Name="CloseMenuItem" Header="Close Program" Click="CloseMenuItem_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <helix:HelixViewport3D Grid.Row="1" x:Name="ViewPort" RotateAroundMouseDownPoint="True" ZoomAroundMouseDownPoint="True">
             <helix:HelixViewport3D.Camera>
                 <PerspectiveCamera x:Name="Camera" Position="-4,-10, 12" LookDirection="3, 8, -8" UpDirection="0, 0, 1"></PerspectiveCamera>
             </helix:HelixViewport3D.Camera>
@@ -20,5 +30,8 @@
             <helix:DefaultLights x:Name="Lights"></helix:DefaultLights>
             <helix:GridLinesVisual3D x:Name="BaseGrid" MinorDistance="2" Thickness="0.02" />
         </helix:HelixViewport3D>
+        <GroupBox Grid.Row="1" HorizontalAlignment="Right" Header="Scene Items">
+            <ItemsControl x:Name="SceneItems"></ItemsControl>
+        </GroupBox>
     </Grid>
 </Window>

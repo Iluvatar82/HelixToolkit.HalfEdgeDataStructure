@@ -295,15 +295,15 @@ namespace HalfEdgeDataStructure
 
         /// <summary>
         /// Shift the Indices of the Vertieces so that the provided Index ist first in the List.
-        /// If the <paramref name="firstPointIndex"/> is not in the List of Vertex Indices of this Triangle nothing happens.
+        /// If the <paramref name="firstVertexIndex"/> is not in the List of Vertex Indices of this Triangle nothing happens.
         /// </summary>
-        /// <param name="firstPointIndex">The Index of the Vertex which should be first in the List of Indices.</param>
-        public void SetFirstPointIndex(int firstPointIndex)
+        /// <param name="firstVertexIndex">The Index of the Vertex which should be first in the List of Indices.</param>
+        public void SetFirstVertexIndex(int firstVertexIndex)
         {
-            if(_vertexIndex1 != firstPointIndex && _vertexIndex2 != firstPointIndex && _vertexIndex3 != firstPointIndex)
+            if(_vertexIndex1 != firstVertexIndex && _vertexIndex2 != firstVertexIndex && _vertexIndex3 != firstVertexIndex)
                 return;
 
-            while(_vertexIndex1 != firstPointIndex)
+            while(_vertexIndex1 != firstVertexIndex)
             {
                 var tempIndex = _vertexIndex1;
                 _vertexIndex1 = _vertexIndex2;
