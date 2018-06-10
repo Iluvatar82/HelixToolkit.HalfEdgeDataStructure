@@ -41,7 +41,6 @@ namespace HalfEdgeDataStructureDemo
             ViewPort.Children.Add(triMesh.CreateMeshVisual3D(new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed)), default(Material)));
             ViewPort.Children.Add(triMesh.CreateBoundaryVisual3D(Colors.LightGreen));
 
-
             MeshBuilder mb = new MeshBuilder();
             mb.AddSphere(new Point3D(3, -1, 0.5), 0.5);
             var mg = mb.ToMesh();
