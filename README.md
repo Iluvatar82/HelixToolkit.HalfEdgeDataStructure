@@ -6,7 +6,7 @@
 Components that form the Structure of the HalfEdge implementation.
 
 [**HalfEdgeDataStructureDemo:**](https://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure/tree/master/HalfEdgeDataStructureDemo) 
-Demo Project to show the Functionality of the HalfEdge - DataStructure. Uses the [HelixToolkit](https://github.com/helix-toolkit/helix-toolkit/helix-toolkit) for rendering.
+Demo Project to show the Functionality of the HalfEdge - DataStructure. Uses the [HelixToolkit](https://github.com/helix-toolkit/helix-toolkit) for rendering.
 
 [**Helper:**](https://github.com/Iluvatar82/HelixToolkit.HalfEdgeDataStructure/tree/master/Helper) 
 Support Classes used to generate Geometry and to extend existing Classes to make Life easier.
