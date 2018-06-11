@@ -9,6 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Menu x:Name="Menu" Grid.Row="0">
@@ -17,21 +18,55 @@
                 <MenuItem x:Name="CloseMenuItem" Header="Close Program" Click="CloseMenuItem_Click"></MenuItem>
             </MenuItem>
         </Menu>
-        <helix:HelixViewport3D Grid.Row="1" x:Name="ViewPort" RotateAroundMouseDownPoint="True" ZoomAroundMouseDownPoint="True">
+        <!--<ToolBar x:Name="Toolbar" >
+            <ToolBar Band="1" BandIndex="1">
+                <Button>
+                    <Image Source="toolbargraphics\cut.bmp"></Image>
+                </Button>
+                <Button>
+                    <Image Source="toolbargraphics\cut.bmp"></Image>
+                </Button>
+            </ToolBar>
+            <ToolBar Band="2" BandIndex="2">
+                <Button>
+                    <Image Source="toolbargraphics\cut.bmp"></Image>
+                </Button>
+                <Button>
+                    <Image Source="toolbargraphics\cut.bmp"></Image>
+                </Button>
+                <Button ToolBar.OverflowMode="Always">
+                    <Image Source="toolbargraphics\save.bmp" />
+                </Button>
+                <Button ToolBar.OverflowMode="Always">
+                    <Image Source="toolbargraphics\open.bmp" />
+                </Button>
+                <Button ToolBar.OverflowMode="Always">
+                    <Image Source="toolbargraphics\print.bmp" />
+                </Button>
+                <Button ToolBar.OverflowMode="Always">
+                    <Image Source="toolbargraphics\preview.bmp" />
+                </Button>
+            </ToolBar>
+        </ToolBar>-->
+        <helix:HelixViewport3D Grid.Row="2" x:Name="ViewPort" ViewCubeTopText="T" ViewCubeBottomText="Bo" ViewCubeRightText="F" ViewCubeLeftText="Ba" ViewCubeFrontText="R" ViewCubeBackText="L" ShowCoordinateSystem="True" CoordinateSystemHorizontalPosition="Right" RotateAroundMouseDownPoint="True" ZoomAroundMouseDownPoint="True" MouseMove="ViewPort_MouseMove">
             <helix:HelixViewport3D.Camera>
                 <PerspectiveCamera x:Name="Camera" Position="-4,-10, 12" LookDirection="3, 8, -8" UpDirection="0, 0, 1"></PerspectiveCamera>
             </helix:HelixViewport3D.Camera>
-            <helix:ArrowVisual3D x:Name="xAxis" Direction="5,0,0" HeadLength="2" Diameter="0.05" Fill="#FF00FF00"/>
-            <helix:BillboardTextVisual3D x:Name="xAxisLabel" Position="5.1, 0, 0" Text="X" Foreground="Green" FontSize="18" />
-            <helix:ArrowVisual3D x:Name="yAxis" Direction="0,5,0" HeadLength="2" Diameter="0.05" Fill="#FF0000FF"/>
-            <helix:BillboardTextVisual3D x:Name="yAxisLabel" Position="0, 5.1, 0" Text="Y" Foreground="Blue" FontSize="18" />
-            <helix:ArrowVisual3D x:Name="zAxis" Direction="0,0,5" HeadLength="2" Diameter="0.05" Fill="#FFFF0000"/>
-            <helix:BillboardTextVisual3D x:Name="zAxisLabel" Position="0, 0, 5.1" Text="Z" Foreground="Red" FontSize="18" />
-            <helix:DefaultLights x:Name="Lights"></helix:DefaultLights>
-            <helix:GridLinesVisual3D x:Name="BaseGrid" MinorDistance="2" Thickness="0.02" />
         </helix:HelixViewport3D>
-        <GroupBox Grid.Row="1" HorizontalAlignment="Right" Header="Scene Items">
-            <ItemsControl x:Name="SceneItems"></ItemsControl>
+        <GroupBox Grid.Row="2" HorizontalAlignment="Right" Header="Scene Items">
+            <ItemsControl x:Name="SceneItems" ItemsSource="{Binding AddedSceneElements, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="True" DataContext="{Binding}" Content="{Binding Name}" Click="CheckBox_Click" Margin=".5"></CheckBox>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
         </GroupBox>
     </Grid>
 </Window>

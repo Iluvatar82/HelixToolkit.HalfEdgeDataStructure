@@ -277,30 +277,81 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// Calculate the Angle between this Vector and the <paramref name="other"/> Vector.
+        /// The Vectors don't need to be normalized.
+        /// </summary>
+        /// <param name="other">The other Vector.</param>
+        /// <returns>Angle between the two Vectors in Radians.</returns>
+        public double CalculateAngle(Vector other)
+        {
+            return CalculateAngle(this, other);
+        }
+
+        /// <summary>
+        /// Reflect a Vector on a Plane defined by it's Normal Vector.
+        /// </summary>
+        /// <param name="vector">The Vector to reflect.</param>
+        /// <param name="normal">The Normal Vector of the Plane to project the Vector on.</param>
+        /// <returns>Reflected Vector.</returns>
+        public static Vector ReflectVector(Vector vector, Vector normal)
+        {
+            var projectedVector = vector.ProjectToVector(normal);
+            return vector - 2 * projectedVector;
+        }
+
+        /// <summary>
+        /// Reflect a Vector on a Plane defined by it's Normal Vector.
+        /// </summary>
+        /// <param name="normal">The Normal Vector of the Plane to project the Vector on.</param>
+        /// <returns>Reflected Vector.</returns>
+        public Vector ReflectVector(Vector normal)
+        {
+            return ReflectVector(this, normal);
+        }
+
+        /// <summary>
         /// Project a Vector to a Plane defined by it's Normal Vector.
         /// </summary>
         /// <param name="vector">The Vector to project.</param>
         /// <param name="normal">The Normal Vector of the Plane to project the Vector on.</param>
-        /// <returns></returns>
-        public static Vector ProjectOntoPlane(Vector vector, Vector normal)
+        /// <returns>Projected Vector.</returns>
+        public static Vector ProjectToPlane(Vector vector, Vector normal)
         {
-            normal.Normalize();
-            var normalVectorVN = Cross(normal, vector);
-            normalVectorVN.Normalize();
-            var projectionVector = Cross(normalVectorVN, normal);
-            return ProjectOntoVector(vector, projectionVector);
+            var projectedVector = vector.ProjectToVector(normal);
+            return vector - projectedVector;
         }
+
+        /// <summary>
+        /// Project this Vector to a Plane defined by it's Normal Vector.
+        /// </summary>
+        /// <param name="normal">The Normal Vector of the Plane to project the Vector on.</param>
+        /// <returns>Projected Vector.</returns>
+        public Vector ProjectToPlane(Vector normal)
+        {
+            return ProjectToPlane(this, normal);
+        }
+
 
         /// <summary>
         /// Project a Vector to another Vector.
         /// </summary>
         /// <param name="vector">The Vector to project.</param>
-        /// <param name="other">The Vector to project onto.</param>
-        /// <returns></returns>
-        public static Vector ProjectOntoVector(Vector vector, Vector other)
+        /// <param name="other">The Vector to project to.</param>
+        /// <returns>Projected Vector.</returns>
+        public static Vector ProjectToVector(Vector vector, Vector other)
         {
             other.Normalize();
             return Dot(vector, other) * other;
+        }
+
+        /// <summary>
+        /// Project this Vector to another Vector.
+        /// </summary>
+        /// <param name="other">The Vector to project to.</param>
+        /// <returns>Projected Vector.</returns>
+        public Vector ProjectToVector(Vector other)
+        {
+            return ProjectToVector(this, other);
         }
 
 

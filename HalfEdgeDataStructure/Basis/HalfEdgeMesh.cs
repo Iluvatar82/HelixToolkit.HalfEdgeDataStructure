@@ -224,6 +224,17 @@ namespace HalfEdgeDataStructure
 
             RemoveTrianlgeFromHalfEdge(triangle);
         }
+        /// <summary>
+        /// Remove a Triangle from the HalfEdgeMesh <see cref="Triangles"/>.
+        /// </summary>
+        /// <param name="triangleIndex">The Index of the Triangle to remove.</param>
+        public void RemoveTriangle(int triangleIndex)
+        {
+            var triangle = _triangles[triangleIndex];
+            _triangles.RemoveAt(triangleIndex);
+
+            RemoveTrianlgeFromHalfEdge(triangle);
+        }
 
         /// <summary>
         /// Remove Triangles from the HalfEdgeMesh <see cref="Triangles"/>.
@@ -233,6 +244,16 @@ namespace HalfEdgeDataStructure
         {
             foreach(var triangle in triangles)
                 RemoveTriangle(triangle);
+        }
+
+        /// <summary>
+        /// Remove Triangles from the HalfEdgeMesh <see cref="Triangles"/>.
+        /// </summary>
+        /// <param name="triangleIndices">The Triangles to remove.</param>
+        public void RemoveTriangles(IEnumerable<int> triangleIndices)
+        {
+            foreach(var triangleIndex in triangleIndices)
+                RemoveTriangle(triangleIndex);
         }
 
         /// <summary>
@@ -514,10 +535,10 @@ namespace HalfEdgeDataStructure
             var equalityComparer = new Vector(0, 0, 0);
             foreach(var vertex in _vertices)
             {
-                ///TODO fix Calculation with Contains!!!
                 var allNeighboringTriangles = vertex.Triangles;
                 var neighboringTriangles = new List<Triangle>();
                 var existingNormals = new HashSet<Vector>();
+
                 foreach(var neighbor in allNeighboringTriangles)
                 {
                     if(!existingNormals.Contains(neighbor.Normal, vectorComparer))
@@ -526,10 +547,13 @@ namespace HalfEdgeDataStructure
                         existingNormals.Add(neighbor.Normal);
                     }
                 }
+
                 vertex.Normal = Vector.Zero();
                 var inverseSumArea = 1.0 / neighboringTriangles.Sum(t => t.Area);
                 foreach(var triangle in neighboringTriangles)
                     vertex.Normal += triangle.Normal * triangle.Area * inverseSumArea;
+
+                vertex.Normal.Normalize();
             }
 
             _hasNormals = true;
@@ -541,8 +565,10 @@ namespace HalfEdgeDataStructure
         /// <param name="triangle">The Triangle that was removed from the <see cref="Triangles"/> of the HalfEdgeMesh.</param>
         private void RemoveTrianlgeFromHalfEdge(Triangle triangle)
         {
-            ///TODO implement and Test
+
         }
+
+
 
         /// <summary>
         /// Calculates the Silhouette of the HalfEdgeMesh for a given Position.

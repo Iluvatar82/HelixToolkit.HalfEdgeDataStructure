@@ -110,5 +110,18 @@ namespace Helper
 
             return lineVisual;
         }
+
+        public static Ray3D GetRay3D(this PerspectiveCamera cam, double xPosFromCenter, double yPosFromCenter)
+        {
+            var ray = new Ray3D();
+            ray.Origin = cam.Position;
+            var left = Vector3D.CrossProduct(cam.LookDirection, cam.UpDirection);
+            var up  = Vector3D.CrossProduct(cam.LookDirection, left);
+            var rayDirection = cam.LookDirection + left + up;
+            rayDirection.Normalize();
+            ray.Direction = rayDirection;
+
+            return ray;
+        }
     }
 }

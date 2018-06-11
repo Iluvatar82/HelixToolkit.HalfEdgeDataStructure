@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using HalfEdgeDataStructureDemo.ViewModels;
 using HelixToolkit.Wpf;
 using Helper;
 
@@ -14,14 +17,15 @@ namespace HalfEdgeDataStructureDemo
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<Visual3D> _sceneElements;
-        private int _numDefaultSceneElements;
+        public MainWindowViewModel ViewModel
+        {
+            get { return (MainWindowViewModel)DataContext; }
+        }
 
         public MainWindow()
         {
+            DataContext = new MainWindowViewModel();
             InitializeComponent();
-
-            _numDefaultSceneElements = ViewPort.Children.Count;
 
             ///Default Scene loading
             LoadDemoSceneMenuItem_Click(this, new RoutedEventArgs());
@@ -29,10 +33,8 @@ namespace HalfEdgeDataStructureDemo
 
         private void LoadDemoSceneMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            _sceneElements = new List<Visual3D>();
-            SceneItems.Items.Clear();
-            while(ViewPort.Children.Count > _numDefaultSceneElements)
-                ViewPort.Children.RemoveAt(_numDefaultSceneElements);
+            ViewModel.AddedSceneElements = new ObservableCollection<Visual3DViewModel>();
+            ViewPort.Children.Clear();
 
             var start = DateTime.Now;
 
@@ -44,45 +46,44 @@ namespace HalfEdgeDataStructureDemo
             ///Demo Scene
             var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero(), 2, CubeSides.All);
             var bigCube = triMesh.CreateVisual3D(default(Material), default(Material));
-            _sceneElements.Add(triMesh.CreateVisual3D(default(Material), default(Material)));
-            _sceneElements.Add(triMesh.CreateBoundaryVisual3D(default(Color)));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "Big Cube"));
 
             triMesh = HalfEdgeMeshGenerator.GenerateCube(new HalfEdgeDataStructure.Vector(1, 1, 2.0005), .499, CubeSides.Z | CubeSides.X);
             var cubeVisual3D = triMesh.CreateVisual3D(default(Material), default(Material));
             var cubeBoundaryVisual3D = triMesh.CreateBoundaryVisual3D(default(Color));
             cubeVisual3D.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 15));
             cubeBoundaryVisual3D.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 15));
-            _sceneElements.Add(cubeVisual3D);
-            _sceneElements.Add(cubeBoundaryVisual3D);
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(cubeVisual3D, "Small Open Cube"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(cubeBoundaryVisual3D, "Small Open Cube Border"));
 
             triMesh = HalfEdgeMeshGenerator.GenerateCube(new HalfEdgeDataStructure.Vector(.5, .5, 2.5), 1, CubeSides.All & ~CubeSides.PositiveZ, true);
-            _sceneElements.Add(triMesh.CreateVisual3D(new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed)), default(Material)));
-            _sceneElements.Add(triMesh.CreateBoundaryVisual3D(Colors.LightGreen));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed)), default(Material)), "Orange Open Cube"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateBoundaryVisual3D(Colors.LightGreen), "Orange Open Cube Border"));
 
             MeshBuilder mb = new MeshBuilder();
             mb.AddSphere(new Point3D(3, -1, 0.5), 0.5);
             var mg = mb.ToMesh();
             triMesh = HalfEdgeMeshGenerator.GenerateFromMeshGeometry3D(mg, true);
-            _sceneElements.Add(triMesh.CreateVisual3D(default(Material), default(Material)));
-            _sceneElements.Add(triMesh.CreateBoundaryVisual3D(default(Color)));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "HelixToolkit Sphere"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateBoundaryVisual3D(default(Color)), "HelixToolkit Sphere Border"));
 
             var sphere = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(-2, 1, 1), 1, 4,
                 CubeSides.All & ~CubeSides.PositiveX & ~CubeSides.NegativeY & ~CubeSides.PositiveZ);
-            _sceneElements.Add(sphere.CreateVisual3D(default(Material), default(Material)));
-            _sceneElements.Add(sphere.CreateBoundaryVisual3D(default(Color)));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere.CreateVisual3D(default(Material), default(Material)), "Coarse Sphere Part"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere.CreateBoundaryVisual3D(default(Color)), "Coarse Sphere Part Border"));
 
             var material = MaterialHelper.CreateMaterial(new SolidColorBrush(Colors.LightSkyBlue), 1, 128, 255, false);
             MaterialHelper.ChangeOpacity(material, 0.5);
 
             var sphere2 = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(-1.975, 0.975, 1.025), 1, 32,
                 CubeSides.All & ~CubeSides.NegativeX & ~CubeSides.PositiveY & ~CubeSides.NegativeZ);
-            _sceneElements.Add(sphere2.CreateVisual3D(material, material));
-            _sceneElements.Add(sphere2.CreateBoundaryVisual3D(default(Color)));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2.CreateVisual3D(material, material), "Fine Transparent Sphere Part"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2.CreateBoundaryVisual3D(default(Color)), "Fine Transparent Sphere Part Border"));
 
             material = MaterialHelper.CreateMaterial(new SolidColorBrush(Colors.LightGoldenrodYellow), 1, 128, 255, false);
             MaterialHelper.ChangeOpacity(material, 0.5);
             var sphere3 = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(2, -0.5, 0.5), 0.5, 16);
-            _sceneElements.Add(sphere3.CreateVisual3D(material, material));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere3.CreateVisual3D(material, material), "Transparent Sphere"));
 
             var timeNeeded = DateTime.Now - start;
             Title = timeNeeded.TotalMilliseconds.ToString();
@@ -96,19 +97,8 @@ namespace HalfEdgeDataStructureDemo
         /// </summary>
         private void AddSceneElements()
         {
-            foreach(var sceneElement in _sceneElements)
-            {
-                ViewPort.Children.Add(sceneElement);
-                var checkBox = new CheckBox()
-                {
-                    IsChecked = true,
-                    Content = sceneElement.GetType(),
-                    DataContext = sceneElement,
-                };
-                checkBox.Click += CheckBox_Click;
-
-                SceneItems.Items.Add(checkBox);
-            }
+            foreach(var sceneElement in ViewModel.AllElements)
+                ViewPort.Children.Add(sceneElement.Visual3D);
         }
 
         /// <summary>
@@ -129,15 +119,31 @@ namespace HalfEdgeDataStructureDemo
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
-            var sceneElement = checkBox.DataContext as Visual3D;
-            var idx = _sceneElements.IndexOf(sceneElement);
-            if(idx == -1)
-                return;
+            var sceneElement = checkBox.DataContext as Visual3DViewModel;
 
             if (checkBox.IsChecked == false)
-                ViewPort.Children.Remove(sceneElement);
+                ViewPort.Children.Remove(sceneElement.Visual3D);
             if(checkBox.IsChecked == true)
-                ViewPort.Children.Add(sceneElement);
+                ViewPort.Children.Add(sceneElement.Visual3D);
+        }
+
+        /// <summary>
+        /// Handle Mouse Move when the Mouse is in the 3D View.
+        /// </summary>
+        /// <param name="sender">The Sender.</param>
+        /// <param name="e">The MouseEventArgs.</param>
+        private void ViewPort_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            /*///TODO correct
+            var width = ViewPort.ActualWidth;
+            var height = ViewPort.ActualHeight;
+            var aspectRatio = height / width;
+            var mousePosition = e.GetPosition(ViewPort);
+            var xValue = mousePosition.X / width - 0.5;
+            var yValue = (height - mousePosition.Y) / width - aspectRatio * 0.5;
+
+            var ray = Camera.GetRay3D(xValue, yValue);;
+            ViewPort.DebugInfo = $"Origin: {ray.Origin.ToString()}, Direction: {ray.Direction.ToString()}";*/
         }
     }
 }

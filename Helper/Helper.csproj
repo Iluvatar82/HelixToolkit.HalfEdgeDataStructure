@@ -50,6 +50,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseViewModel.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HalfEdgeMeshGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
