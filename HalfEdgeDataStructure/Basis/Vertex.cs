@@ -11,8 +11,8 @@ namespace HalfEdgeDataStructure
     [Serializable]
     public class Vertex : AbstractMeshElement, ICloneable, ISerializable
     {
-        private Double3 _position;
-        private Double3 _textureCoordinate;
+        private Float3 _position;
+        private Float3 _textureCoordinate;
         private Vector _normal;
         private int _halfEdgeIndex;
 
@@ -20,7 +20,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// X Position.
         /// </summary>
-        public double X {
+        public float X {
             get { return _position.X; }
             set { _position.X = value; }
         }
@@ -28,7 +28,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Y Position.
         /// </summary>
-        public double Y {
+        public float Y {
             get { return _position.Y; }
             set { _position.Y = value; }
         }
@@ -36,7 +36,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Z Position.
         /// </summary>
-        public double Z {
+        public float Z {
             get { return _position.Z; }
             set { _position.Z = value; }
         }
@@ -44,7 +44,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Position of the Vertex.
         /// </summary>
-        public Double3 Position {
+        public Float3 Position {
             get { return _position; }
             set { _position = value; }
         }
@@ -52,7 +52,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// TextureCoordinate of the Vertex.
         /// </summary>
-        public Double3 TextureCoordinate {
+        public Float3 TextureCoordinate {
             get { return _textureCoordinate; }
             set { _textureCoordinate = value; }
         }
@@ -145,9 +145,9 @@ namespace HalfEdgeDataStructure
         private Vertex()
             :base()
         {
-            _position = default(Double3);
-            _textureCoordinate = default(Double3);
-            _normal = null;
+            _position = default(Float3);
+            _textureCoordinate = default(Float3);
+            _normal = Vector.Zero;
             _halfEdgeIndex = -1;
         }
 
@@ -157,10 +157,10 @@ namespace HalfEdgeDataStructure
         /// <param name="x">X Position of the Vertex.</param>
         /// <param name="y">Y Position of the Vertex.</param>
         /// <param name="z">Z Position of the Vertex.</param>
-        public Vertex(double x, double y, double z)
+        public Vertex(float x, float y, float z)
             : this()
         {
-            _position = new Double3(x, y, z);
+            _position = new Float3(x, y, z);
         }
 
         /// <summary>
@@ -172,10 +172,10 @@ namespace HalfEdgeDataStructure
         /// <param name="u">U TextureCoordinate of the Vertex.</param>
         /// <param name="v">V TextureCoordinate of the Vertex.</param>
         /// <param name="w">W TextureCoordinate of the Vertex.</param>
-        public Vertex(double x, double y, double z, double u, double v, double w)
+        public Vertex(float x, float y, float z, float u, float v, float w)
             : this(x, y, z)
         {
-            _textureCoordinate = new Double3(u, v, w);
+            _textureCoordinate = new Float3(u, v, w);
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace HalfEdgeDataStructure
         /// <param name="nx">X Direction of the Normal of the Vertex.</param>
         /// <param name="ny">Y Direction of the Normal of the Vertex.</param>
         /// <param name="nz">Z Direction of the Normal of the Vertex.</param>
-        public Vertex(double x, double y, double z, double u, double v, double w, double nx, double ny, double nz)
+        public Vertex(float x, float y, float z, float u, float v, float w, float nx, float ny, float nz)
             : this(x, y, z, u, v, w)
         {
             _normal = new Vector(nx, ny, nz);
@@ -200,7 +200,7 @@ namespace HalfEdgeDataStructure
         /// Constructor with Position Values.
         /// </summary>
         /// <param name="position">The Position of the Vertex.</param>
-        public Vertex(Double3 position)
+        public Vertex(Float3 position)
             :this()
         {
             _position = position;
@@ -211,7 +211,7 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="position">The Position of the Vertex.</param>
         /// <param name="textureCoordinate">The TextureCoordinate of the Vertex.</param>
-        public Vertex(Double3 position, Double3 textureCoordinate)
+        public Vertex(Float3 position, Float3 textureCoordinate)
             : this(position)
         {
             _textureCoordinate = textureCoordinate;
@@ -223,7 +223,7 @@ namespace HalfEdgeDataStructure
         /// <param name="position">The Position of the Vertex.</param>
         /// <param name="textureCoordinate">The TextureCoordinate of the Vertex.</param>
         /// <param name="normal">The Normal of the Vertex.</param>
-        public Vertex(Double3 position, Double3 textureCoordinate, Vector normal)
+        public Vertex(Float3 position, Float3 textureCoordinate, Vector normal)
             : this(position, textureCoordinate)
         {
             _normal = normal;
@@ -236,7 +236,7 @@ namespace HalfEdgeDataStructure
         /// <param name="x">X Position of the Vertex.</param>
         /// <param name="y">Y Position of the Vertex.</param>
         /// <param name="z">Z Position of the Vertex.</param>
-        public Vertex(HalfEdgeMesh triangleMesh, double x, double y, double z)
+        public Vertex(HalfEdgeMesh triangleMesh, float x, float y, float z)
             :this(x, y, z)
         {
             TriangleMesh = triangleMesh;
@@ -252,7 +252,7 @@ namespace HalfEdgeDataStructure
         /// <param name="u">U TextureCoordinate of the Vertex.</param>
         /// <param name="v">V TextureCoordinate of the Vertex.</param>
         /// <param name="w">W TextureCoordinate of the Vertex.</param>
-        public Vertex(HalfEdgeMesh triangleMesh, double x, double y, double z, double u, double v, double w)
+        public Vertex(HalfEdgeMesh triangleMesh, float x, float y, float z, float u, float v, float w)
             : this(x, y, z, u, v, w)
         {
             TriangleMesh = triangleMesh;
@@ -272,7 +272,7 @@ namespace HalfEdgeDataStructure
         /// <param name="nx">X Direction of the Normal of the Vertex.</param>
         /// <param name="ny">Y Direction of the Normal of the Vertex.</param>
         /// <param name="nz">Z Direction of the Normal of the Vertex.</param>
-        public Vertex(HalfEdgeMesh triangleMesh, double x, double y, double z, double u, double v, double w, double nx, double ny, double nz)
+        public Vertex(HalfEdgeMesh triangleMesh, float x, float y, float z, float u, float v, float w, float nx, float ny, float nz)
             : this(x, y, z, u, v, w, nx, ny, nz)
         {
             TriangleMesh = triangleMesh;
@@ -283,7 +283,7 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
         /// <param name="position">The Position of the Vertex.</param>
-        public Vertex(HalfEdgeMesh triangleMesh, Double3 position)
+        public Vertex(HalfEdgeMesh triangleMesh, Float3 position)
             : this(position)
         {
             TriangleMesh = triangleMesh;
@@ -295,7 +295,7 @@ namespace HalfEdgeDataStructure
         /// <param name="triangleMesh">The HalfEdgeMesh this Vertex belongs to.</param>
         /// <param name="position">The Position of the Vertex.</param>
         /// <param name="textureCoordinate">The TextureCoordinate of the Vertex.</param>
-        public Vertex(HalfEdgeMesh triangleMesh, Double3 position, Double3 textureCoordinate)
+        public Vertex(HalfEdgeMesh triangleMesh, Float3 position, Float3 textureCoordinate)
             : this(triangleMesh, position)
         {
             _textureCoordinate = textureCoordinate;
@@ -309,7 +309,7 @@ namespace HalfEdgeDataStructure
         /// <param name="position">The Position of the Vertex.</param>
         /// <param name="textureCoordinate">The TextureCoordinate of the Vertex.</param>
         /// <param name="normal">The Normal of the Vertex.</param>
-        public Vertex(HalfEdgeMesh triangleMesh, Double3 position, Double3 textureCoordinate, Vector normal)
+        public Vertex(HalfEdgeMesh triangleMesh, Float3 position, Float3 textureCoordinate, Vector normal)
             : this (triangleMesh, position, textureCoordinate)
         {
             _normal = normal;
@@ -341,8 +341,8 @@ namespace HalfEdgeDataStructure
         {
             TriangleMesh = (HalfEdgeMesh)info.GetValue("HalfEdgeMesh", typeof(HalfEdgeMesh));
             Index = -1;
-            _position = (Double3)info.GetValue("Position", typeof(Double3));
-            _textureCoordinate = (Double3)info.GetValue("TextureCoordinate", typeof(Double3));
+            _position = (Float3)info.GetValue("Position", typeof(Float3));
+            _textureCoordinate = (Float3)info.GetValue("TextureCoordinate", typeof(Float3));
             _normal = (Vector)info.GetValue("Normal", typeof(Vector));
             _halfEdgeIndex = -1;
         }
@@ -365,8 +365,8 @@ namespace HalfEdgeDataStructure
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("HalfEdgeMesh", TriangleMesh, typeof(HalfEdgeMesh));
-            info.AddValue("Position", Position, typeof(Double3));
-            info.AddValue("TextureCoordinate", TextureCoordinate, typeof(Double3));
+            info.AddValue("Position", Position, typeof(Float3));
+            info.AddValue("TextureCoordinate", TextureCoordinate, typeof(Float3));
             info.AddValue("Normal", Normal, typeof(Vector));
         }
 
@@ -411,9 +411,9 @@ namespace HalfEdgeDataStructure
         /// Implicitly create a Double3 from the <see cref="Position"/> of a Vertex.
         /// </summary>
         /// <param name="vertex"></param>
-        public static implicit operator Double3(Vertex vertex)
+        public static implicit operator Float3(Vertex vertex)
         {
-            return new Double3(vertex.Position);
+            return new Float3(vertex.Position);
         }
 
 

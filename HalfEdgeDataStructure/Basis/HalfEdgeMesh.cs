@@ -83,13 +83,13 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// The Volume of the HalfEdgeMesh if it is closed.
         /// </summary>
-        public Double Volume {
+        public float Volume {
             get
             {
                 if(!IsClosed)
                     return 0;
 
-                return Math.Abs(_triangles.Select(t => t.SignedVolume).Sum());
+                return MathF.Abs(_triangles.Select(t => t.SignedVolume).Sum());
             }
         }
 
@@ -531,7 +531,7 @@ namespace HalfEdgeDataStructure
         /// </summary>
         public void CalculateVertexNormals()
         {
-            var vectorComparer = new VectorComparer();
+            ///var vectorComparer = new VectorComparer<Vector>();
             var equalityComparer = new Vector(0, 0, 0);
             foreach(var vertex in _vertices)
             {
@@ -541,15 +541,15 @@ namespace HalfEdgeDataStructure
 
                 foreach(var neighbor in allNeighboringTriangles)
                 {
-                    if(!existingNormals.Contains(neighbor.Normal, vectorComparer))
+                    if(!existingNormals.Contains(neighbor.Normal))
                     {
                         neighboringTriangles.Add(neighbor);
                         existingNormals.Add(neighbor.Normal);
                     }
                 }
 
-                vertex.Normal = Vector.Zero();
-                var inverseSumArea = 1.0 / neighboringTriangles.Sum(t => t.Area);
+                vertex.Normal = Vector.Zero;
+                var inverseSumArea = 1f / neighboringTriangles.Sum(t => t.Area);
                 foreach(var triangle in neighboringTriangles)
                     vertex.Normal += triangle.Normal * triangle.Area * inverseSumArea;
 

@@ -16,7 +16,7 @@ namespace HalfEdgeDataStructure
         private int _vertexIndex3;
         private int _halfEdgeIndex;
         private Vector _normal;
-        private double _area;
+        private float _area;
 
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace HalfEdgeDataStructure
         /// </summary>
         public Vector Normal {
             get {
-                if(_normal == default(Vector))
+                if(_normal.Equals(default(Vector)))
                     Calculate();
 
                 return _normal;
@@ -157,7 +157,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// The Area of this Triangle.
         /// </summary>
-        public double Area {
+        public float Area {
             get {
                 if(_area == -1)
                     Calculate();
@@ -169,13 +169,13 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// The signed Volume of the Triangle.
         /// </summary>
-        public double SignedVolume {
+        public float SignedVolume {
             get
             {
                 if(TriangleMesh == null)
                     return 0;
 
-                return Vector.Dot(Vertex1, Vector.Cross(Vertex2, Vertex3)) / 6.0;
+                return Vector.Dot(Vertex1, Vector.Cross(Vertex2, Vertex3)) / 6f;
             }
         }
 
@@ -288,7 +288,7 @@ namespace HalfEdgeDataStructure
             var vector13 = TriangleMesh.Vertices[_vertexIndex3] - TriangleMesh.Vertices[_vertexIndex1];
 
             var cross = Vector.Cross(vector12, vector13);
-            _area = cross.Length * 0.5;
+            _area = cross.Length * 0.5f;
             cross.Normalize();
             _normal = cross;
         }

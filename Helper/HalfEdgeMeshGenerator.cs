@@ -71,7 +71,7 @@ namespace Helper
         /// <param name="calculateNormals">Calculate Vertex Normals or not.</param>
         /// <returns>The generated HalfEdgeMesh.</returns>
         public static HalfEdgeMesh GenerateCube(Vector origin,
-            double size = 1, CubeSides sides = CubeSides.All, bool calculateNormals = false)
+            float size = 1, CubeSides sides = CubeSides.All, bool calculateNormals = false)
         {
             var vertices = new List<Vertex>()
             {
@@ -134,11 +134,11 @@ namespace Helper
         /// <param name="calculateNormals">Calculate Vertex Normals or not.</param>
         /// <returns>The generated HalfEdgeMesh.</returns>
         public static HalfEdgeMesh GenerateSphere(Vector center,
-            double radius = 1, int numSides = 8, CubeSides sides = CubeSides.All, bool calculateNormals = false)
+            float radius = 1, int numSides = 8, CubeSides sides = CubeSides.All, bool calculateNormals = false)
         {
-            var shiftVector = Vector.One() * 0.5;
+            var shiftVector = Vector.One * 0.5f;
             var mesh = new HalfEdgeMesh();
-            var sideLength = 1.0 / numSides;
+            var sideLength = 1f / numSides;
             var verticesPerSide = numSides + 1;
             var vertices = new List<Vertex>();
 
@@ -157,7 +157,7 @@ namespace Helper
                     {
                         if(z == 0 || z == numSides || x == 0 || x == numSides || y == 0 || y == numSides)
                         {
-                            var vertex = new Vertex(x * sideLength - 0.5, y * sideLength - 0.5, z * sideLength - 0.5)
+                            var vertex = new Vertex(x * sideLength - 0.5f, y * sideLength - 0.5f, z * sideLength - 0.5f)
                             {
                                 Index = idx,
                             };
@@ -251,7 +251,7 @@ namespace Helper
         /// <returns>The generated HalfEdgeMesh.</returns>
         public static HalfEdgeMesh GenerateFromMeshGeometry3D(MeshGeometry3D meshGeometry, bool calculateNormals = false)
         {
-            var vertices = meshGeometry.Positions.Select(p => new Vertex(p.X, p.Y, p.Z)).ToList();
+            var vertices = meshGeometry.Positions.Select(p => new Vertex((float)p.X, (float)p.Y, (float)p.Z)).ToList();
             var triangles = new List<Triangle>();
             for(int i = 0; i < meshGeometry.TriangleIndices.Count; i += 3)
                 triangles.Add(new Triangle(meshGeometry.TriangleIndices.ElementAt(i),

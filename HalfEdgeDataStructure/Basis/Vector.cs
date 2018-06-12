@@ -8,17 +8,17 @@ namespace HalfEdgeDataStructure
     /// Represents a Vector.
     /// </summary>
     [Serializable]
-    public class Vector : ICloneable, ISerializable
+    public struct Vector : ICloneable, ISerializable, IEqualityComparer<Vector>
     {
-        private Double3 _direction;
-        private double _length;
-        private double _lengthSquared;
+        private Float3 _direction;
+        private float _length;
+        private float _lengthSquared;
 
 
         /// <summary>
         /// X Direction.
         /// </summary>
-        public double X {
+        public float X {
             get { return _direction.X; }
             set { _direction.X = value; }
         }
@@ -26,7 +26,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Y Direction.
         /// </summary>
-        public double Y {
+        public float Y {
             get { return _direction.Y; }
             set { _direction.Y = value; }
         }
@@ -34,7 +34,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Z Direction.
         /// </summary>
-        public double Z {
+        public float Z {
             get { return _direction.Z; }
             set { _direction.Z = value; }
         }
@@ -42,7 +42,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Direction of the Vector.
         /// </summary>
-        public Double3 Direction {
+        public Float3 Direction {
             get { return _direction; }
             set { _direction = value; }
         }
@@ -50,7 +50,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Length of the Vector.
         /// </summary>
-        public double Length {
+        public float Length {
             get {
                 if(_length == -1)
                     UpdateLengthInformation();
@@ -63,7 +63,7 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Squared Length of the Vector.
         /// </summary>
-        public double LengthSquared {
+        public float LengthSquared {
             get {
                 if(_lengthSquared == -1)
                     UpdateLengthSquared();
@@ -74,21 +74,52 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
+        /// Create a Vector collinear with the X Axis.
+        /// </summary>
+        /// <returns>New Vector.</returns>
+        public static Vector UnitX => new Vector(1, 0, 0);
+
+        /// <summary>
+        /// Create a Vector collinear with the Y Axis.
+        /// </summary>
+        /// <returns>New Vector.</returns>
+        public static Vector UnitY => new Vector(0, 1, 0);
+
+        /// <summary>
+        /// Create a Vector collinear with the Z Axis.
+        /// </summary>
+        /// <returns>New Vector.</returns>
+        public static Vector UnitZ => new Vector(0, 0, 1);
+
+        /// <summary>
+        /// Create a Vector pointing nowhere.
+        /// </summary>
+        /// <returns>New Vector.</returns>
+        public static Vector Zero => new Vector(0, 0, 0);
+
+        /// <summary>
+        /// Create a Vector pointing to 1 / 1 / 1.
+        /// </summary>
+        /// <returns>New Vector.</returns>
+        public static Vector One => new Vector(1, 1, 1);
+
+        /// <summary>
         /// Is the Vector normalized (i.e. it's Length == 1.0) or not.
         /// </summary>
         public bool IsNormalized {
-            get { return _lengthSquared == 1.0; }
+            get { return _lengthSquared == 1f; }
         }
 
-        /// <summary>
+
+        /*/// <summary>
         /// Default Constructor.
         /// </summary>
-        private Vector()
+        public Vector()
         {
-            _direction = new Double3();
+            _direction = new Float3(0, 0, 0);
             _length = -1;
             _lengthSquared = -1;
-        }
+        }*/
 
         /// <summary>
         /// Constructor with Position Values.
@@ -96,20 +127,20 @@ namespace HalfEdgeDataStructure
         /// <param name="x">X Direction of the Vertex.</param>
         /// <param name="y">Y Direction of the Vertex.</param>
         /// <param name="z">Z Direction of the Vertex.</param>
-        public Vector(double x, double y, double z)
-            :this()
+        public Vector(float x, float y, float z)
         {
-            _direction = new Double3(x, y, z);
+            _direction = new Float3(x, y, z);
+            _length = -1;
+            _lengthSquared = -1;
         }
 
         /// <summary>
         /// Constructor with Direction Values.
         /// </summary>
         /// <param name="direction">The Direction of the Vector.</param>
-        public Vector(Double3 direction)
+        public Vector(Float3 direction)
             : this(direction.X, direction.Y, direction.Z)
         { }
-
 
         /// <summary>
         /// Constructor that uses an existing Vector to create a new Vector.
@@ -133,54 +164,8 @@ namespace HalfEdgeDataStructure
         /// <param name="info">The SerializationInfo.</param>
         /// <param name="context">The StreamingContext.</param>
         public Vector(SerializationInfo info, StreamingContext context)
-        {
-            _direction = (Double3)info.GetValue("Direction", typeof(Double3));
-        }
-
-        /// <summary>
-        /// Create a Vector collinear with the X Axis.
-        /// </summary>
-        /// <returns>New Vector.</returns>
-        public static Vector UnitX()
-        {
-            return new Vector(1, 0, 0);
-        }
-
-        /// <summary>
-        /// Create a Vector collinear with the Y Axis.
-        /// </summary>
-        /// <returns>New Vector.</returns>
-        public static Vector UnitY()
-        {
-            return new Vector(0, 1, 0);
-        }
-
-        /// <summary>
-        /// Create a Vector collinear with the Z Axis.
-        /// </summary>
-        /// <returns>New Vector.</returns>
-        public static Vector UnitZ()
-        {
-            return new Vector(0, 0, 1);
-        }
-
-        /// <summary>
-        /// Create a Vector pointing nowhere.
-        /// </summary>
-        /// <returns>New Vector.</returns>
-        public static Vector Zero()
-        {
-            return new Vector(0, 0, 0);
-        }
-
-        /// <summary>
-        /// Create a Vector pointing to 1 / 1 / 1.
-        /// </summary>
-        /// <returns>New Vector.</returns>
-        public static Vector One()
-        {
-            return new Vector(1, 1, 1);
-        }
+            :this((Float3)info.GetValue("Direction", typeof(Float3)))
+        { }
 
 
         /// <summary>
@@ -199,7 +184,7 @@ namespace HalfEdgeDataStructure
         /// <param name="context">The StreamingContext.</param>
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Direction", Direction, typeof(Double3));
+            info.AddValue("Direction", Direction, typeof(Float3));
         }
 
         /// <summary>
@@ -208,7 +193,7 @@ namespace HalfEdgeDataStructure
         private void UpdateLengthInformation()
         {
             UpdateLengthSquared();
-            _length = Math.Sqrt(_lengthSquared);
+            _length = MathF.Sqrt(_lengthSquared);
         }
 
         /// <summary>
@@ -234,8 +219,8 @@ namespace HalfEdgeDataStructure
             Y /= _length;
             Z /= _length;
 
-            _lengthSquared = 1.0;
-            _length = 1.0;
+            _lengthSquared = 1f;
+            _length = 1f;
         }
 
         /// <summary>
@@ -259,7 +244,7 @@ namespace HalfEdgeDataStructure
         /// <param name="first">The first Vector.</param>
         /// <param name="second">The second Vector.</param>
         /// <returns>Scalar Product of the two Vectors.</returns>
-        public static double Dot(Vector first, Vector second)
+        public static float Dot(Vector first, Vector second)
         {
             return first.X * second.X + first.Y * second.Y + first.Z * second.Z;
         }
@@ -271,9 +256,9 @@ namespace HalfEdgeDataStructure
         /// <param name="first">The first Vector.</param>
         /// <param name="second">The second Vector.</param>
         /// <returns>Angle between the two Vectors in Radians.</returns>
-        public static double CalculateAngle(Vector first, Vector second)
+        public static float CalculateAngle(Vector first, Vector second)
         {
-            return Math.Acos(Dot(first, second) / (first.Length * second.Length));
+            return MathF.Acos(Dot(first, second) / (first.Length * second.Length));
         }
 
         /// <summary>
@@ -282,7 +267,7 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="other">The other Vector.</param>
         /// <returns>Angle between the two Vectors in Radians.</returns>
-        public double CalculateAngle(Vector other)
+        public float CalculateAngle(Vector other)
         {
             return CalculateAngle(this, other);
         }
@@ -393,7 +378,7 @@ namespace HalfEdgeDataStructure
         /// <param name="factor">The Scaling Factor.</param>
         /// <param name="vector">The Vector.</param>
         /// <returns>The scaled Vector.</returns>
-        public static Vector operator *(double factor, Vector vector)
+        public static Vector operator *(float factor, Vector vector)
         {
             return new Vector(vector.X * factor, vector.Y * factor, vector.Z * factor);
         }
@@ -404,7 +389,7 @@ namespace HalfEdgeDataStructure
         /// <param name="vector">The Vector.</param>
         /// <param name="factor">The Scaling Factor.</param>
         /// <returns>The scaled Vector.</returns>
-        public static Vector operator *(Vector vector, double factor)
+        public static Vector operator *(Vector vector, float factor)
         {
             return new Vector(vector.X * factor, vector.Y * factor, vector.Z * factor);
         }
@@ -412,29 +397,17 @@ namespace HalfEdgeDataStructure
         /// <summary>
         /// Calculate the Division of a Vector. Essentially making it longer or shorter.
         /// </summary>
-        /// <param name="divisor">The dividing Value.</param>
-        /// <param name="vector">The Vector.</param>
-        /// <returns>The divided Vector.</returns>
-        public static Vector operator /(double divisor, Vector vector)
-        {
-            if(divisor == 0)
-                return new Vector();
-
-            return new Vector(vector.X / divisor, vector.Y / divisor, vector.Z / divisor);
-        }
-
-        /// <summary>
-        /// Calculate the Division of a Vector. Essentially making it longer or shorter.
-        /// </summary>
         /// <param name="vector">The Vector.</param>
         /// <param name="divisor">The dividing Value.</param>
         /// <returns>The divided Vector.</returns>
-        public static Vector operator /(Vector vector, double divisor)
+        public static Vector operator /(Vector vector, float divisor)
         {
             if(divisor == 0)
-                return new Vector();
+                return default(Vector);
 
-            return new Vector(vector.X / divisor, vector.Y / divisor, vector.Z / divisor);
+            var invDivisor = 1f / divisor;
+
+            return new Vector(vector.X * invDivisor, vector.Y * invDivisor, vector.Z * invDivisor);
         }
 
         /// <summary>
@@ -450,9 +423,9 @@ namespace HalfEdgeDataStructure
         /// Implicitly create a Double3 from the <see cref="Direction"/> of a Vector.
         /// </summary>
         /// <param name="vertex"></param>
-        public static implicit operator Double3(Vector vector)
+        public static implicit operator Float3(Vector vector)
         {
-            return new Double3(vector.Direction);
+            return new Float3(vector.Direction);
         }
 
 
@@ -464,6 +437,26 @@ namespace HalfEdgeDataStructure
         public override string ToString()
         {
             return $"[{_direction.ToString()}; Length: {_length:0.00}]";
+        }
+
+        public bool Equals(Vector first, Vector second)
+        {
+            if(first.Equals(default(Vector)) && second.Equals(default(Vector)))
+                return true;
+
+            if(first.Equals(default(Vector)) && !second.Equals(default(Vector)) ||
+               !first.Equals(default(Vector)) && second.Equals(default(Vector)))
+                return false;
+
+            if((first - second).LengthSquared < 0.001f)
+                return true;
+
+            return false;
+        }
+
+        public int GetHashCode(Vector obj)
+        {
+            return obj.GetHashCode();
         }
     }
 }

@@ -14,32 +14,46 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1E9A7EF6-3118-4601-8489-076EB71AF3BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E9A7EF6-3118-4601-8489-076EB71AF3BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E9A7EF6-3118-4601-8489-076EB71AF3BF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1E9A7EF6-3118-4601-8489-076EB71AF3BF}.Debug|x64.Build.0 = Debug|Any CPU
 		{1E9A7EF6-3118-4601-8489-076EB71AF3BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E9A7EF6-3118-4601-8489-076EB71AF3BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E9A7EF6-3118-4601-8489-076EB71AF3BF}.Release|x64.ActiveCfg = Release|Any CPU
+		{1E9A7EF6-3118-4601-8489-076EB71AF3BF}.Release|x64.Build.0 = Release|Any CPU
 		{1629D1A5-5A20-498B-B5E8-2EB0E75CF60B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1629D1A5-5A20-498B-B5E8-2EB0E75CF60B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1629D1A5-5A20-498B-B5E8-2EB0E75CF60B}.Debug|x64.ActiveCfg = Debug|x64
+		{1629D1A5-5A20-498B-B5E8-2EB0E75CF60B}.Debug|x64.Build.0 = Debug|x64
 		{1629D1A5-5A20-498B-B5E8-2EB0E75CF60B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1629D1A5-5A20-498B-B5E8-2EB0E75CF60B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1629D1A5-5A20-498B-B5E8-2EB0E75CF60B}.Release|x64.ActiveCfg = Release|x64
+		{1629D1A5-5A20-498B-B5E8-2EB0E75CF60B}.Release|x64.Build.0 = Release|x64
 		{EB2DF97E-1388-41D1-8370-7D42578323F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB2DF97E-1388-41D1-8370-7D42578323F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB2DF97E-1388-41D1-8370-7D42578323F5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EB2DF97E-1388-41D1-8370-7D42578323F5}.Debug|x64.Build.0 = Debug|Any CPU
 		{EB2DF97E-1388-41D1-8370-7D42578323F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB2DF97E-1388-41D1-8370-7D42578323F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB2DF97E-1388-41D1-8370-7D42578323F5}.Release|x64.ActiveCfg = Release|Any CPU
+		{EB2DF97E-1388-41D1-8370-7D42578323F5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4618FA5E-8C14-499A-B871-458D17210E1C}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
