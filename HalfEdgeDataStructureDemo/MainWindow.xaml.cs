@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using HalfEdgeDataStructureDemo.ViewModels;
@@ -17,11 +17,17 @@ namespace HalfEdgeDataStructureDemo
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// The ViewModel of the MainWindow.
+        /// </summary>
         public MainWindowViewModel ViewModel
         {
             get { return (MainWindowViewModel)DataContext; }
         }
 
+        /// <summary>
+        /// Default Constructor of the MainWindow.
+        /// </summary>
         public MainWindow()
         {
             DataContext = new MainWindowViewModel();
@@ -36,7 +42,7 @@ namespace HalfEdgeDataStructureDemo
             ViewModel.AddedSceneElements = new ObservableCollection<Visual3DViewModel>();
             ViewPort.Children.Clear();
 
-            var start = DateTime.Now;
+            ///var start = DateTime.Now;
 
             ///Test the HalfEdge Manipulations
             /*var triMesh = HalfEdgeMeshGenerator.GenerateHalfEdgeTests();
@@ -85,8 +91,8 @@ namespace HalfEdgeDataStructureDemo
             var sphere3 = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(2, -0.5, 0.5), 0.5, 16);
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere3.CreateVisual3D(material, material), "Transparent Sphere"));
 
-            var timeNeeded = DateTime.Now - start;
-            Title = timeNeeded.TotalMilliseconds.ToString();
+            ///var timeNeeded = DateTime.Now - start;
+            ///Title = timeNeeded.TotalMilliseconds.ToString();
             ///CloseMenuItem_Click(this, new RoutedEventArgs());
 
             AddSceneElements();
@@ -132,18 +138,82 @@ namespace HalfEdgeDataStructureDemo
         /// </summary>
         /// <param name="sender">The Sender.</param>
         /// <param name="e">The MouseEventArgs.</param>
-        private void ViewPort_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ViewPort_MouseMove(object sender, MouseEventArgs e)
         {
-            /*///TODO correct
+            if(!ViewModel.ShowHoveredElement)
+                return;
+
+            var maxValue = Math.Tan((ViewPort.Camera as PerspectiveCamera).FieldOfView * 0.5 * ExtensionMethods.DegreeToRadians);
             var width = ViewPort.ActualWidth;
             var height = ViewPort.ActualHeight;
             var aspectRatio = height / width;
             var mousePosition = e.GetPosition(ViewPort);
-            var xValue = mousePosition.X / width - 0.5;
-            var yValue = (height - mousePosition.Y) / width - aspectRatio * 0.5;
+            var xValue = mousePosition.X / width * 2 * maxValue - maxValue;
+            var yValue = (height - mousePosition.Y) / height * maxValue - 0.5;
+            var ray = Camera.GetRay3D(xValue, yValue);
 
-            var ray = Camera.GetRay3D(xValue, yValue);;
-            ViewPort.DebugInfo = $"Origin: {ray.Origin.ToString()}, Direction: {ray.Direction.ToString()}";*/
+            var material = MaterialHelper.CreateMaterial(new SolidColorBrush(Colors.Orange), 1, 128, 255, false);
+            MaterialHelper.ChangeOpacity(material, 0.5);
+
+            var hitElements = Viewport3DHelper.FindHits(ViewPort.Viewport, mousePosition)
+                .Where(el => ViewModel.AddedSceneElements.Select(ae => ae.Visual3D).Contains(el.Visual));
+            /*var hitElements = ViewPort.FindHits(xValue, yValue)
+                .Where(el => ViewModel.AddedSceneElements.Select(ae => ae.Visual3D).Contains(el.Visual));*/
+            if(hitElements.Count() > 0)
+            {
+                var hitElement = hitElements.First().Visual;
+                if(hitElement == ViewPort.Children.Last())
+                    return;
+                else if(ViewModel.HoveredElement != null)
+                    RemoveHoveredElement();
+
+                if(hitElement is MeshVisual3D)
+                    ViewModel.HoveredElement = new MeshVisual3D()
+                    {
+                        Mesh = (hitElement as MeshVisual3D).Mesh,
+                        FaceMaterial = material,
+                        FaceBackMaterial = material,
+                        Transform = hitElement.Transform,
+                        EdgeDiameter = 0,
+                        VertexRadius = 0
+                    };
+                else if (hitElement is MeshGeometryVisual3D)
+                {
+                    ViewModel.HoveredElement = new MeshGeometryVisual3D()
+                    {
+                        MeshGeometry = (hitElement as MeshGeometryVisual3D).MeshGeometry,
+                        Material = material,
+                        BackMaterial = material,
+                        Transform = hitElement.Transform,
+                    };
+                }
+
+                if(ViewModel.HoveredElement != null)
+                    ViewPort.Children.Add(ViewModel.HoveredElement);
+            }
+            else
+                RemoveHoveredElement();
+
+            ViewPort.DebugInfo = $"Origin: {ray.Origin.ToString(3)}, Direction: {ray.Direction.ToString(3)}";
+        }
+
+        /// <summary>
+        /// Change the Option to show the hovered Element or not.
+        /// </summary>
+        /// <param name="sender">The Sender.</param>
+        /// <param name="e">The RoutedEventArgs.</param>
+        private void ShowHoveredSceneElementsMenuItem_Checked(object sender, RoutedEventArgs e)
+        {
+            RemoveHoveredElement();
+        }
+
+        /// <summary>
+        /// Remove the hovered Element from the ViewPort and the ViewModel.
+        /// </summary>
+        private void RemoveHoveredElement()
+        {
+            ViewPort.Children.Remove(ViewModel.HoveredElement);
+            ViewModel.HoveredElement = null;
         }
     }
 }

@@ -13,9 +13,12 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Menu x:Name="Menu" Grid.Row="0">
-            <MenuItem x:Name="File" Header="File">
+            <MenuItem x:Name="FileMenuItem" Header="File">
                 <MenuItem x:Name="LoadDemoSceneMenuItem" Header="Load Demo Scene" Click="LoadDemoSceneMenuItem_Click"></MenuItem>
                 <MenuItem x:Name="CloseMenuItem" Header="Close Program" Click="CloseMenuItem_Click"></MenuItem>
+            </MenuItem>
+            <MenuItem x:Name="OptionsMenuItem" Header="Options">
+                <MenuItem x:Name="ShowHoveredSceneElementsMenuItem" Header="Show Hovered Scene Element" IsCheckable="True" IsChecked="{Binding ShowHoveredElement}" Checked="ShowHoveredSceneElementsMenuItem_Checked" ></MenuItem>
             </MenuItem>
         </Menu>
         <!--<ToolBar x:Name="Toolbar" >
@@ -50,7 +53,7 @@
         </ToolBar>-->
         <helix:HelixViewport3D Grid.Row="2" x:Name="ViewPort" ViewCubeTopText="T" ViewCubeBottomText="Bo" ViewCubeRightText="F" ViewCubeLeftText="Ba" ViewCubeFrontText="R" ViewCubeBackText="L" ShowCoordinateSystem="True" CoordinateSystemHorizontalPosition="Right" RotateAroundMouseDownPoint="True" ZoomAroundMouseDownPoint="True" MouseMove="ViewPort_MouseMove">
             <helix:HelixViewport3D.Camera>
-                <PerspectiveCamera x:Name="Camera" Position="-4,-10, 12" LookDirection="3, 8, -8" UpDirection="0, 0, 1"></PerspectiveCamera>
+                <PerspectiveCamera x:Name="Camera" Position="-4,-10, 12" LookDirection="3, 8, -8" UpDirection="0, 0, 1" FieldOfView="90"></PerspectiveCamera>
             </helix:HelixViewport3D.Camera>
         </helix:HelixViewport3D>
         <GroupBox Grid.Row="2" HorizontalAlignment="Right" Header="Scene Items">
