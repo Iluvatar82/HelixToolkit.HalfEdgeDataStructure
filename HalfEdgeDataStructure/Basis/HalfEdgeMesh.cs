@@ -15,6 +15,7 @@ namespace HalfEdgeDataStructure
         private List<Triangle> _triangles;
         private List<HalfEdge> _halfEdges;
         private bool _hasNormals;
+        private const float Epsilon = 0.001f;
 
 
         /// <summary>
@@ -130,8 +131,11 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="triangle">Existing HalfEdgeMesh.</param>
         public HalfEdgeMesh(HalfEdgeMesh mesh)
-            :this(mesh.Vertices, mesh.Triangles)
-        { }
+        {
+            _vertices = new List<Vertex>(mesh.Vertices);
+            _triangles = new List<Triangle>(mesh.Triangles);
+            _halfEdges = new List<HalfEdge>(mesh.HalfEdges);
+        }
 
         /// <summary>
         /// Constructor that is used by the Deserialization.
@@ -186,6 +190,27 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="vertices">The Vertices to add.</param>
         public void AddVertices(IEnumerable<Vertex> vertices)
+        {
+            foreach(var vertex in vertices)
+                AddVertex(vertex);
+        }
+
+        /// <summary>
+        /// Remove a Vertex from the HalfEdgeMesh <see cref="Vertices"/>.
+        /// </summary>
+        /// <param name="vertex">The Vertex to add.</param>
+        public void RemoveVertex(Vertex vertex)
+        {
+            RemoveVertexFromHalfEdge(vertex);
+
+            _vertices.Remove(vertex);
+        }
+
+        /// <summary>
+        /// Remove Vertices from the HalfEdgeMesh <see cref="Vertices"/>.
+        /// </summary>
+        /// <param name="vertices">The Vertices to remove.</param>
+        public void RemoveVertices(IEnumerable<Vertex> vertices)
         {
             foreach(var vertex in vertices)
                 AddVertex(vertex);
@@ -510,7 +535,6 @@ namespace HalfEdgeDataStructure
             else
             {
                 ///Set HalfEdge Properties
-                var halfEdgeCount = _halfEdges.Count;
                 var halfEdge1 = foundExistingHalfEdges.First(he => he.Triangle == null
                     && he.StartVertex.Index == triangle.Vertex1.Index);
                 var halfEdge2 = halfEdge1.NextHalfEdge;
@@ -522,8 +546,38 @@ namespace HalfEdgeDataStructure
                 halfEdge3.TriangleIndex = triangle.Index;
 
                 ///Set Face Properties
-                triangle.HalfEdgeIndex = halfEdgeCount;
+                triangle.HalfEdgeIndex = halfEdge1.Index;
             }
+        }
+
+        /// <summary>
+        /// Handle the HalfEdges of the HalfEdgeMesh when a Vertex is removed from it.
+        /// </summary>
+        /// <param name="vertex">The Vertex that is removed from the <see cref="Vertices"/> of the HalfEdgeMesh.</param>
+        private void RemoveVertexFromHalfEdge(Vertex vertex)
+        {
+
+        }
+
+        /// <summary>
+        /// Handle the HalfEdges of the HalfEdgeMesh when a Triangle is removed from it.
+        /// </summary>
+        /// <param name="triangle">The Triangle that was removed from the <see cref="Triangles"/> of the HalfEdgeMesh.</param>
+        private void RemoveTrianlgeFromHalfEdge(Triangle triangle)
+        {
+
+        }
+
+        /// <summary>
+        /// Optimizes the Mesh by eliminating close Points.
+        /// </summary>
+        /// <param name="eps">The maximum Distance of the Points that should be merged into one Point.</param>
+        /// <returns>Optimized HalfEdgeMesh.</returns>
+        public HalfEdgeMesh Optimize(float eps = Epsilon)
+        {
+
+
+            return this;
         }
 
         /// <summary>
@@ -557,15 +611,6 @@ namespace HalfEdgeDataStructure
             }
 
             _hasNormals = true;
-        }
-
-        /// <summary>
-        /// Handle the HalfEdges of the HalfEdgeMesh when a Triangle is removed from it.
-        /// </summary>
-        /// <param name="triangle">The Triangle that was removed from the <see cref="Triangles"/> of the HalfEdgeMesh.</param>
-        private void RemoveTrianlgeFromHalfEdge(Triangle triangle)
-        {
-
         }
 
 

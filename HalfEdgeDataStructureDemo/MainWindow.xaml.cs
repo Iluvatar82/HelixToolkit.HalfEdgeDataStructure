@@ -46,8 +46,9 @@ namespace HalfEdgeDataStructureDemo
 
             ///Test the HalfEdge Manipulations
             /*var triMesh = HalfEdgeMeshGenerator.GenerateHalfEdgeTests();
-            _sceneElements.Add(triMesh.CreateMeshVisual3D(default(Material), default(Material)));
-            _sceneElements.Add(triMesh.CreateBoundaryVisual3D(default(Color)));*/
+            triMesh.RemoveVertex(triMesh.Vertices[4]);
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "TestVisual"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateBoundaryVisual3D(default(Color)), "TestVisual Boundary"));*/
 
             ///Demo Scene
             var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero, 2, CubeSides.All);

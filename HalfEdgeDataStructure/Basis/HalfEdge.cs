@@ -245,7 +245,7 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="triangle">Existing HalfEdge.</param>
         public HalfEdge(HalfEdge halfEdge)
-            : this(halfEdge.TriangleMesh, halfEdge._startVertexIndex, halfEdge._endVertexIndex)
+            : this(halfEdge.TriangleMesh, halfEdge.Index, halfEdge._startVertexIndex, halfEdge._endVertexIndex, halfEdge._triangleIndex)
         { }
 
 
