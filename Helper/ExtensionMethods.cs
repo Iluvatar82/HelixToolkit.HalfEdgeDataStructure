@@ -84,7 +84,7 @@ namespace Helper
             if(backMaterial == default(Material))
                 backMaterial = new DiffuseMaterial(new SolidColorBrush(DefaultBackgroundColor));
 
-            var mesh3D = new Mesh3D(mesh.Vertices.Select(p => new Point3D(p.X, p.Y, p.Z)), mesh.Triangles.SelectMany(t => t.VertexIndizes));
+            var mesh3D = new Mesh3D(mesh.Vertices.Select(p => new Point3D(p.X, p.Y, p.Z)), mesh.Triangles.Where(t => t.HalfEdge != null).SelectMany(t => t.VertexIndizes));
 
             var meshVisual = new MeshVisual3D()
             {

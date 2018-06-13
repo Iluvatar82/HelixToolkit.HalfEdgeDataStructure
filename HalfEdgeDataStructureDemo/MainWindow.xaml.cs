@@ -45,13 +45,13 @@ namespace HalfEdgeDataStructureDemo
             ///var start = DateTime.Now;
 
             ///Test the HalfEdge Manipulations
-            /*var triMesh = HalfEdgeMeshGenerator.GenerateHalfEdgeTests();
-            triMesh.RemoveVertex(triMesh.Vertices[4]);
+            var triMesh = HalfEdgeMeshGenerator.GenerateHalfEdgeTests();
+            triMesh.RemoveTriangle(triMesh.Triangles[0]);
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "TestVisual"));
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateBoundaryVisual3D(default(Color)), "TestVisual Boundary"));*/
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateBoundaryVisual3D(default(Color)), "TestVisual Boundary"));
 
             ///Demo Scene
-            var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero, 2, CubeSides.All);
+            /*var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero, 2, CubeSides.All);
             var bigCube = triMesh.CreateVisual3D(default(Material), default(Material));
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "Big Cube"));
 
@@ -94,7 +94,7 @@ namespace HalfEdgeDataStructureDemo
 
             ///var timeNeeded = DateTime.Now - start;
             ///Title = timeNeeded.TotalMilliseconds.ToString();
-            ///CloseMenuItem_Click(this, new RoutedEventArgs());
+            ///CloseMenuItem_Click(this, new RoutedEventArgs());*/
 
             AddSceneElements();
         }

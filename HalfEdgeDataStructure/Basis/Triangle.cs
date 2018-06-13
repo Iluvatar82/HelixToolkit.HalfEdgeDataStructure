@@ -53,6 +53,12 @@ namespace HalfEdgeDataStructure
                     _vertexIndex3
                 };
             }
+            set
+            {
+                _vertexIndex1 = value[0];
+                _vertexIndex2 = value[1];
+                _vertexIndex3 = value[2];
+            }
         }
 
         /// <summary>

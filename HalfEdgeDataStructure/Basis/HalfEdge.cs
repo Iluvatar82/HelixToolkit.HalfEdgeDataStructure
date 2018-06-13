@@ -42,6 +42,12 @@ namespace HalfEdgeDataStructure
                     _endVertexIndex
                 };
             }
+            set
+            {
+                _startVertexIndex = value[0];
+                _endVertexIndex = value[1];
+            }
+
         }
 
         /// <summary>
