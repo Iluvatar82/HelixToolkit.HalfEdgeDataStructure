@@ -3,3 +3,4 @@ D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\bin\x64\Debug
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\obj\x64\Debug\HalfEdgeDataStructure.csproj.CoreCompileInputs.cache
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\obj\x64\Debug\HalfEdgeDataStructure.dll
 D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\obj\x64\Debug\HalfEdgeDataStructure.pdb
+D:\GitHub\HelixToolkit.HalfEdgeDataStructure\HalfEdgeDataStructure\obj\x64\Debug\HalfEdgeDataStructure.csprojAssemblyReference.cache

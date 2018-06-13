@@ -565,7 +565,7 @@ namespace HalfEdgeDataStructure
         /// <param name="triangle">The Triangle that was removed from the <see cref="Triangles"/> of the HalfEdgeMesh.</param>
         private void RemoveTrianlgeFromHalfEdge(Triangle triangle)
         {
-
+            var vertices = triangle.Vertices;
         }
 
         /// <summary>
