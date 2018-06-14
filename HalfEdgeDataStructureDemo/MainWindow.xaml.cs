@@ -45,13 +45,19 @@ namespace HalfEdgeDataStructureDemo
             ///var start = DateTime.Now;
 
             ///Test the HalfEdge Manipulations
-            var triMesh = HalfEdgeMeshGenerator.GenerateHalfEdgeTests();
+            /*var triMesh = HalfEdgeMeshGenerator.GenerateHalfEdgeTests();
             triMesh.RemoveTriangle(triMesh.Triangles[0]);
+            triMesh.RemoveTriangle(triMesh.Triangles[4]);
+            triMesh.RemoveTriangle(triMesh.Triangles[3]);
+            triMesh.RemoveTriangle(triMesh.Triangles[1]);
+            triMesh.RemoveTriangle(triMesh.Triangles[2]);
+            triMesh.RemoveTriangle(triMesh.Triangles[7]);
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "TestVisual"));
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateBoundaryVisual3D(default(Color)), "TestVisual Boundary"));
+            ViewPort.DebugInfo = string.Join(" -> ", triMesh.BoundaryVertices.Where((v, i) => i == 0 || i % 2 == 1).Select(v => v.ToString()));*/
 
             ///Demo Scene
-            /*var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero, 2, CubeSides.All);
+            var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero, 2, CubeSides.All);
             var bigCube = triMesh.CreateVisual3D(default(Material), default(Material));
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "Big Cube"));
 
@@ -84,6 +90,17 @@ namespace HalfEdgeDataStructureDemo
 
             var sphere2 = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(-1.975f, 0.975f, 1.025f), 1, 32,
                 CubeSides.All & ~CubeSides.NegativeX & ~CubeSides.PositiveY & ~CubeSides.NegativeZ);
+            var numSphere2Triangles = sphere2.Triangles.Count;
+            var numSphere2Vertices = sphere2.Vertices.Count;
+            var rand = new Random();
+            ///var numRemove = rand.Next((int)(numSphere2Triangles * 2f));
+            var numRemove = (int)(numSphere2Vertices * 0.2f);
+            var removalList = new int[numRemove];
+            for(int i = 0; i < numRemove; i++)
+                removalList[i] = rand.Next(numSphere2Triangles);
+            ///sphere2.RemoveTriangles(removalList);
+            sphere2.RemoveVertices(removalList);
+
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2.CreateVisual3D(material, material), "Fine Transparent Sphere Part"));
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2.CreateBoundaryVisual3D(default(Color)), "Fine Transparent Sphere Part Border"));
 
@@ -94,7 +111,7 @@ namespace HalfEdgeDataStructureDemo
 
             ///var timeNeeded = DateTime.Now - start;
             ///Title = timeNeeded.TotalMilliseconds.ToString();
-            ///CloseMenuItem_Click(this, new RoutedEventArgs());*/
+            ///CloseMenuItem_Click(this, new RoutedEventArgs());
 
             AddSceneElements();
         }

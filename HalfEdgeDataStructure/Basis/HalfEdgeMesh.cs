@@ -53,8 +53,8 @@ namespace HalfEdgeDataStructure
                 HalfEdge currentBoundaryHalfEdge = null;
                 do
                 {
-                    currentBoundaryHalfEdge = _halfEdges.FirstOrDefault(he => he.Triangle == null && he.IsOnBorder &&
-                        !foundBoundaryHalfEdge.Contains(he) && he.OppositeHalfEdge.Triangle != null);
+                    currentBoundaryHalfEdge = _halfEdges.FirstOrDefault(he => he.TriangleMesh != null && he.Triangle == null
+                    && !foundBoundaryHalfEdge.Contains(he) && he.OppositeHalfEdge.Triangle != null);
 
                     if(currentBoundaryHalfEdge == default(HalfEdge))
                         break;
@@ -204,8 +204,16 @@ namespace HalfEdgeDataStructure
         public void RemoveVertex(Vertex vertex)
         {
             RemoveVertexFromHalfEdge(vertex);
+        }
 
-            _vertices.Remove(vertex);
+        /// <summary>
+        /// Remove a Vertex from the HalfEdgeMesh <see cref="Vertices"/>.
+        /// </summary>
+        /// <param name="vertexIndex">The Vertex to add.</param>
+        public void RemoveVertex(int vertexIndex)
+        {
+            var vertex = _vertices[vertexIndex];
+            RemoveVertexFromHalfEdge(vertex);
         }
 
         /// <summary>
@@ -215,7 +223,17 @@ namespace HalfEdgeDataStructure
         public void RemoveVertices(IEnumerable<Vertex> vertices)
         {
             foreach(var vertex in vertices)
-                AddVertex(vertex);
+                RemoveVertex(vertex);
+        }
+
+        /// <summary>
+        /// Remove Vertices from the HalfEdgeMesh <see cref="Vertices"/>.
+        /// </summary>
+        /// <param name="vertexIndices">The Indices of the Vertices to remove.</param>
+        public void RemoveVertices(IEnumerable<int> vertexIndices)
+        {
+            foreach(var vertexIndex in vertexIndices)
+                RemoveVertex(vertexIndex);
         }
 
         /// <summary>
@@ -248,7 +266,6 @@ namespace HalfEdgeDataStructure
         public void RemoveTriangle(Triangle triangle)
         {
             RemoveTrianlgeFromHalfEdge(triangle);
-            ///_triangles.Remove(triangle);
         }
         /// <summary>
         /// Remove a Triangle from the HalfEdgeMesh <see cref="Triangles"/>.
@@ -258,7 +275,6 @@ namespace HalfEdgeDataStructure
         {
             var triangle = _triangles[triangleIndex];
             RemoveTrianlgeFromHalfEdge(triangle);
-            ///_triangles.RemoveAt(triangleIndex);
         }
 
         /// <summary>
@@ -556,7 +572,12 @@ namespace HalfEdgeDataStructure
         /// <param name="vertex">The Vertex that is removed from the <see cref="Vertices"/> of the HalfEdgeMesh.</param>
         private void RemoveVertexFromHalfEdge(Vertex vertex)
         {
+            if(vertex.TriangleMesh == null)
+                return;
 
+            var triangles = vertex.Triangles.Where(t => t != null).ToList();
+            foreach(var triangle in triangles)
+                RemoveTrianlgeFromHalfEdge(triangle);
         }
 
         /// <summary>
@@ -565,6 +586,21 @@ namespace HalfEdgeDataStructure
         /// <param name="triangle">The Triangle that was removed from the <see cref="Triangles"/> of the HalfEdgeMesh.</param>
         private void RemoveTrianlgeFromHalfEdge(Triangle triangle)
         {
+            if(triangle.TriangleMesh == null)
+                return;
+
+            var borderHalfEdges = triangle.HalfEdges.Where(he => he.IsOnBorder);
+
+            if(borderHalfEdges.Count() == 1)
+                triangle.SetFirstVertexIndex(borderHalfEdges.ElementAt(0).StartVertex.Index);
+            else if(borderHalfEdges.Count() == 2)
+            {
+                triangle.SetFirstVertexIndex(borderHalfEdges.ElementAt(0).StartVertex.Index);
+
+                if(borderHalfEdges.ElementAt(1).Index == borderHalfEdges.ElementAt(0).PreviousHalfEdge.Index)
+                    triangle.SetFirstVertexIndex(borderHalfEdges.ElementAt(1).StartVertex.Index);
+            }
+
             var vertices = triangle.Vertices.ToList();
             var halfEdges = triangle.HalfEdges.ToList();
             var triangles = triangle.Triangles.Where(t => t != null).ToList();
@@ -576,28 +612,38 @@ namespace HalfEdgeDataStructure
                     var nextHe = vertex.Triangles.Where(t => t != null).Count() == 1 ?
                         -1 : vertex.HalfEdges.First(vHe => !halfEdges.Contains(vHe) && vHe.Triangle != null).Index;
                     vertex.HalfEdgeIndex = nextHe;
+
+                    if (nextHe == -1)
+                    {
+                        vertex.Index = -1;
+                        vertex.TriangleMesh = null;
+                    }
                 }
             }
 
             triangle.VertexIndizes = new int[] { -1, -1, -1 };
             triangle.HalfEdgeIndex = -1;
+            triangle.Index = -1;
+            triangle.TriangleMesh = null;
 
             foreach(var halfEdge in halfEdges)
             {
-                if (halfEdge.StartVertex.HalfEdges.Count() == 0)
+                if(halfEdge.OppositeHalfEdge.Triangle == null)
                 {
                     halfEdge.OppositeHalfEdge.VertexIndizes = new int[] { -1, -1 };
                     halfEdge.OppositeHalfEdge.PreviousHalfEdge.NextHalfEdgeIndex = halfEdge.NextHalfEdge.Index;
                     halfEdge.NextHalfEdge.PreviousHalfEdgeIndex = halfEdge.OppositeHalfEdge.PreviousHalfEdge.Index;
 
-                    halfEdge.PreviousHalfEdge.OppositeHalfEdge.VertexIndizes = new int[] { -1, -1 };
-                    halfEdge.PreviousHalfEdge.OppositeHalfEdge.NextHalfEdge.PreviousHalfEdgeIndex = halfEdge.NextHalfEdge.Index;
-                    halfEdge.NextHalfEdge.NextHalfEdgeIndex = halfEdge.PreviousHalfEdge.OppositeHalfEdge.NextHalfEdge.Index;
-                }
+                    halfEdge.OppositeHalfEdge.NextHalfEdge.PreviousHalfEdgeIndex = halfEdge.PreviousHalfEdge.Index;
+                    halfEdge.PreviousHalfEdge.NextHalfEdgeIndex = halfEdge.OppositeHalfEdge.NextHalfEdge.Index;
 
-                halfEdge.TriangleIndex = -1;
-                if (halfEdge.OppositeHalfEdge.Triangle == null)
+                    halfEdge.TriangleIndex = -1;
                     halfEdge.VertexIndizes = new int[] { -1, -1 };
+                    halfEdge.Index = -1;
+                    halfEdge.TriangleMesh = null;
+                }
+                else
+                    halfEdge.TriangleIndex = -1;
             }
         }
 

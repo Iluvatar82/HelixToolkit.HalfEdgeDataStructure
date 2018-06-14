@@ -95,11 +95,22 @@ namespace HalfEdgeDataStructure
         public HalfEdge[] HalfEdges {
             get
             {
-                return new HalfEdge[]
+                var firstHalfEdge = HalfEdge;
+                if(_vertexIndex1 != firstHalfEdge.StartVertex.Index)
+                    firstHalfEdge = firstHalfEdge.NextHalfEdge;
+                if(_vertexIndex1 != firstHalfEdge.StartVertex.Index)
+                    firstHalfEdge = firstHalfEdge.NextHalfEdge;
+                /*return new HalfEdge[]
                 {
                     HalfEdge,
                     HalfEdge.NextHalfEdge,
                     HalfEdge.PreviousHalfEdge
+                };*/
+                return new HalfEdge[]
+                {
+                    firstHalfEdge,
+                    firstHalfEdge.NextHalfEdge,
+                    firstHalfEdge.PreviousHalfEdge
                 };
             }
         }
@@ -110,12 +121,24 @@ namespace HalfEdgeDataStructure
         public Triangle[] Triangles {
             get
             {
+                var firstHalfEdge = HalfEdge;
+                if(_vertexIndex1 != firstHalfEdge.StartVertex.Index)
+                    firstHalfEdge = firstHalfEdge.NextHalfEdge;
+                if(_vertexIndex1 != firstHalfEdge.StartVertex.Index)
+                    firstHalfEdge = firstHalfEdge.NextHalfEdge;
                 return new Triangle[]
+                {
+                    firstHalfEdge.OppositeTriangle,
+                    firstHalfEdge.NextHalfEdge.OppositeTriangle,
+                    firstHalfEdge.PreviousHalfEdge.OppositeTriangle
+                };
+
+                /*return new Triangle[]
                 {
                     HalfEdge.OppositeTriangle,
                     HalfEdge.NextHalfEdge.OppositeTriangle,
                     HalfEdge.PreviousHalfEdge.OppositeTriangle
-                };
+                };*/
             }
         }
 
