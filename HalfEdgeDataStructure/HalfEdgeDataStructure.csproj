@@ -70,6 +70,7 @@
     <Compile Include="Basis\BaseStructs.cs" />
     <Compile Include="Basis\HalfEdge.cs" />
     <Compile Include="Basis\HalfEdgeMesh.cs" />
+    <Compile Include="Basis\Plane.cs" />
     <Compile Include="Basis\Triangle.cs" />
     <Compile Include="Basis\Vector.cs" />
     <Compile Include="Basis\Vertex.cs" />
