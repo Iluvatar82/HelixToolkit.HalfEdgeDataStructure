@@ -386,6 +386,17 @@ namespace HalfEdgeDataStructure
             return null;
         }
 
+        /// <summary>
+        /// Calculates the shortes Path to another Vertex using the existing Edges of the <see cref="HalfEdgeMesh"/>.
+        /// </summary>
+        /// <param name="other">The other Vertex to search the Path to.</param>
+        /// <returns>List of HalfEdges that lead from this Vertex to the other Vertex, if the are both Part of the same HalfEdgeMesh.</returns>
+        public List<HalfEdge> ShortestPathTo(Vertex other)
+        {
+            ///TODO implement
+            return null;
+        }
+
 
         /// <summary>
         /// Calculates the Vector between two Vertices.

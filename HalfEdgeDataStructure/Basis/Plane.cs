@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace HalfEdgeDataStructure.Basis
+namespace HalfEdgeDataStructure
 {
     [Serializable]
     public class Plane: ICloneable, ISerializable

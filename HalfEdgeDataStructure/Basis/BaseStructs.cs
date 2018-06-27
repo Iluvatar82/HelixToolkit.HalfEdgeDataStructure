@@ -7,6 +7,10 @@ namespace HalfEdgeDataStructure
     /// </summary>
     public static class MathF
     {
+        public const float DegreeToRadians = (float)Math.PI / 180;
+        public const float RadiansToDegree = 1f / DegreeToRadians;
+
+
         public static float Sqrt(float v) { return (float)Math.Sqrt(v); }
         public static float Abs(float v) { return Math.Abs(v); }
         public static float Pow(float a, float b) { return (float)Math.Pow(a, b); }
@@ -75,6 +79,7 @@ namespace HalfEdgeDataStructure
             set { _z = value; }
         }
 
+
         /// <summary>
         /// Constructor with all Values.
         /// </summary>
@@ -94,8 +99,9 @@ namespace HalfEdgeDataStructure
         /// </summary>
         /// <param name="existing">Existing Double3.</param>
         public Float3(Float3 existing)
-            :this(existing.X, existing.Y, existing.Z)
+            : this(existing.X, existing.Y, existing.Z)
         { }
+
 
         /// <summary>
         /// Clone this Double3 and return a Copy of it.

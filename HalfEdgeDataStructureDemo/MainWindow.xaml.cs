@@ -42,8 +42,6 @@ namespace HalfEdgeDataStructureDemo
             ViewModel.AddedSceneElements = new ObservableCollection<Visual3DViewModel>();
             ViewPort.Children.Clear();
 
-            ///var start = DateTime.Now;
-
             ///Test the HalfEdge Manipulations
             /*var triMesh = HalfEdgeMeshGenerator.GenerateHalfEdgeTests();
             triMesh.RemoveTriangle(triMesh.Triangles[0]);
@@ -93,12 +91,10 @@ namespace HalfEdgeDataStructureDemo
             var numSphere2Triangles = sphere2.Triangles.Count;
             var numSphere2Vertices = sphere2.Vertices.Count;
             var rand = new Random();
-            ///var numRemove = rand.Next((int)(numSphere2Triangles * 2f));
             var numRemove = (int)(numSphere2Vertices * 0.2f);
             var removalList = new int[numRemove];
             for(int i = 0; i < numRemove; i++)
                 removalList[i] = rand.Next(numSphere2Triangles);
-            ///sphere2.RemoveTriangles(removalList);
             sphere2.RemoveVertices(removalList);
 
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2.CreateVisual3D(material, material), "Fine Transparent Sphere Part"));
@@ -108,10 +104,6 @@ namespace HalfEdgeDataStructureDemo
             MaterialHelper.ChangeOpacity(material, 0.5);
             var sphere3 = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(2, -0.5f, 0.5f), 0.5f, 16);
             ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere3.CreateVisual3D(material, material), "Transparent Sphere"));
-
-            ///var timeNeeded = DateTime.Now - start;
-            ///Title = timeNeeded.TotalMilliseconds.ToString();
-            ///CloseMenuItem_Click(this, new RoutedEventArgs());
 
             AddSceneElements();
         }
@@ -158,19 +150,6 @@ namespace HalfEdgeDataStructureDemo
         /// <param name="e">The MouseEventArgs.</param>
         private void ViewPort_MouseMove(object sender, MouseEventArgs e)
         {
-            /*var maxValue = Math.Tan((ViewPort.Camera as PerspectiveCamera).FieldOfView * 0.5 * ExtensionMethods.DegreeToRadians);
-            var width = ViewPort.ActualWidth;
-            var height = ViewPort.ActualHeight;
-            var num = 10000;
-            Ray3D ray = default(Ray3D);
-            var start = DateTime.Now;
-            var mousePosition = e.GetPosition(ViewPort);
-            var xValue = mousePosition.X / width * 2 * maxValue - maxValue;
-            var yValue = (height - mousePosition.Y) / height * maxValue - 0.5;
-            for(int i = 0; i < num; i++)
-                ray = Camera.GetRay3D(xValue, yValue);
-            var end = DateTime.Now;*/
-
             if(!ViewModel.ShowHoveredElement)
                 return;
 
@@ -188,8 +167,6 @@ namespace HalfEdgeDataStructureDemo
 
             var hitElements = Viewport3DHelper.FindHits(ViewPort.Viewport, mousePosition)
                 .Where(el => ViewModel.AddedSceneElements.Select(ae => ae.Visual3D).Contains(el.Visual));
-            ///var hitElements = ViewPort.FindHits(xValue, yValue)
-            ///    .Where(el => ViewModel.AddedSceneElements.Select(ae => ae.Visual3D).Contains(el.Visual));
             if(hitElements.Count() > 0)
             {
                 var hitElement = hitElements.First().Visual;
@@ -226,9 +203,6 @@ namespace HalfEdgeDataStructureDemo
                 RemoveHoveredElement();
 
             ViewPort.DebugInfo = $"Origin: {ray.Origin.ToString(3)}, Direction: {ray.Direction.ToString(3)}";
-            ///var raysPerMS = num / (end - start).TotalMilliseconds;
-            ///var mRaysPerS = raysPerMS * 0.001f;
-            ///ViewPort.DebugInfo = $"MRays/s: {mRaysPerS.ToString("#.###")}";
         }
 
         /// <summary>

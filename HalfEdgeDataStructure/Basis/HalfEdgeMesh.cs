@@ -5,6 +5,12 @@ using System.Runtime.Serialization;
 
 namespace HalfEdgeDataStructure
 {
+    public enum SubdivisionType
+    {
+        Default
+    }
+
+
     /// <summary>
     /// Represents the complete Mesh of the HalfEdge DataStructure.
     /// </summary>
@@ -648,24 +654,10 @@ namespace HalfEdgeDataStructure
         }
 
         /// <summary>
-        /// Optimizes the Mesh by eliminating close Points.
-        /// </summary>
-        /// <param name="eps">The maximum Distance of the Points that should be merged into one Point.</param>
-        /// <returns>Optimized HalfEdgeMesh.</returns>
-        public HalfEdgeMesh Optimize(float eps = Epsilon)
-        {
-
-
-            return this;
-        }
-
-        /// <summary>
         /// Calculate the Vertex Normals for the HalfEdgeMesh.
         /// </summary>
         public void CalculateVertexNormals()
         {
-            ///var vectorComparer = new VectorComparer<Vector>();
-            var equalityComparer = new Vector(0, 0, 0);
             foreach(var vertex in _vertices)
             {
                 var allNeighboringTriangles = vertex.Triangles;
@@ -692,7 +684,38 @@ namespace HalfEdgeDataStructure
             _hasNormals = true;
         }
 
+        /// <summary>
+        /// Optimizes the Mesh by eliminating close Points.
+        /// </summary>
+        /// <param name="eps">The maximum Distance of the Points that should be merged into one Point.</param>
+        /// <returns>Optimized HalfEdgeMesh.</returns>
+        public HalfEdgeMesh Optimize(float eps = Epsilon)
+        {
+            ///TODO implement
+            return this;
+        }
 
+        /// <summary>
+        /// Creates a Convex Hull for the HalfEdgeMesh.
+        /// </summary>
+        /// <returns>The Convex Hull of the HalfEdgeMesh.</returns>
+        public HalfEdgeMesh CreateConvexHull()
+        {
+            ///TODO implement
+            return this;
+        }
+
+        /// <summary>
+        /// Subdivide the HalfEdgeMesh.
+        /// </summary>
+        /// <param name="type">The Subdivision Algorithm Type.</param>
+        /// <param name="steps">How many Subdivision Steps should be performed.</param>
+        /// <returns>New subdivided HalfEdgeMesh.</returns>
+        public HalfEdgeMesh Subdivide(SubdivisionType type = SubdivisionType.Default, int steps = 1)
+        {
+            ///TODO implement
+            return this;
+        }
 
         /// <summary>
         /// Calculates the Silhouette of the HalfEdgeMesh for a given Position.
@@ -701,7 +724,66 @@ namespace HalfEdgeDataStructure
         /// <returns>List of HalfEdge Lists because a Mesh can have more than one Silhouette.</returns>
         public List<List<HalfEdge>> CalculateSilhouette(Vector position)
         {
-            ///TODO implement and Test
+            ///TODO implement
+            return null;
+        }
+
+        /// <summary>
+        /// Get all Triangles that are intersecting the provided Plane.
+        /// </summary>
+        /// <param name="plane">The Intersection Plane.</param>
+        /// <returns>List of <see cref="Triangle"/>that all intersect the Plane.</returns>
+        public List<Triangle> IntersectingTriangles(Plane plane)
+        {
+            ///TODO implement
+            return null;
+        }
+
+        /// <summary>
+        /// Cut the HalfEdgeMesh along the Plane and calculate the individual cut Parts of the HalfEdgeMesh.
+        /// </summary>
+        /// <param name="plane">The Plane to cut the HalfEdgeMesh.</param>
+        /// <param name="closed">Indicates if the resulting HalfEdgeMeshes should be closed at the cutting Plane or not (default = false)</param>
+        /// <returns></returns>
+        public List<HalfEdgeMesh> Cut(Plane plane, bool closed = false)
+        {
+            ///TODO implement
+            return null;
+        }
+
+        /// <summary>
+        /// Merge the HalfEdgeMesh with a number of other HalfEdgeMeshes and return the merged Mesh.
+        /// </summary>
+        /// <param name="meshes">The Meshes that should be merges into this HalfEdgeMesh.</param>
+        /// <param name="optimize">Indicates the need to also optimize the merged HalfEdgeMesh, i.e. merge Vertices etc. (default = false).</param>
+        /// <returns>Merged HalfEdgeMesh.</returns>
+        public HalfEdgeMesh MergeWith(IEnumerable<HalfEdgeMesh> meshes, bool optimize = false)
+        {
+            ///TODO implement
+            return null;
+        }
+
+        /// <summary>
+        /// Smoothes all Edges, that are sharper than the provided <paramref name="maxAngle"/> Value.
+        /// </summary>
+        /// <param name="maxAngle">The maximum Angle that may exist in the smoothed HalfEdgeMesh (default = 90°).</param>
+        /// <returns>Smoothed HalfEdgeMesh with Edge Angles <= <paramref name="maxAngle"/>.</returns>
+        public HalfEdgeMesh SmoothEdges(float maxAngle = 90 * MathF.DegreeToRadians)
+        {
+            ///TODO implement
+            return null;
+        }
+
+        /// <summary>
+        /// Fractures (splits) the HalfedgeMesh into many smaller Parts.
+        /// </summary>
+        /// <param name="position">The Position of the Fracture Point. The Fractures near this Point are smaller than the one's farther away.</param>
+        /// <param name="numParts">The Number of Parts that should be generated from the existing HalfEdgeMesh.</param>
+        /// <param name="closed">Indicates if the resulting HalfEdgeMeshes should be closed or not (default = false)</param>
+        /// <returns>List of HalfEdgeMesh Objects that are parts of the original HalfEdgeMesh.</returns>
+        public List<HalfEdgeMesh> Fracture(Float3 position = default(Float3), int numParts = -1, bool closed = false)
+        {
+            ///TODO implement
             return null;
         }
     }
