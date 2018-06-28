@@ -724,8 +724,13 @@ namespace HalfEdgeDataStructure
         /// <returns>List of HalfEdge Lists because a Mesh can have more than one Silhouette.</returns>
         public List<List<HalfEdge>> CalculateSilhouette(Vector position)
         {
-            ///TODO implement
-            return null;
+            var result = new List<List<HalfEdge>>();
+
+            var halfEdges = _halfEdges.Where(h => !h.IsOnBorder && Math.Sign(Vector.Dot(position - h.StartVertex.Position, h.Triangles[0].Normal)) !=
+                Math.Sign(Vector.Dot(position - h.StartVertex.Position, h.Triangles[1].Normal)));
+
+
+            return halfEdges.Select(h => new List<HalfEdge> { h }).ToList();
         }
 
         /// <summary>

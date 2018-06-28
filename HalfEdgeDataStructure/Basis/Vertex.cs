@@ -393,6 +393,10 @@ namespace HalfEdgeDataStructure
         /// <returns>List of HalfEdges that lead from this Vertex to the other Vertex, if the are both Part of the same HalfEdgeMesh.</returns>
         public List<HalfEdge> ShortestPathTo(Vertex other)
         {
+            if(TriangleMesh != other.TriangleMesh)
+                return null;
+
+
             ///TODO implement
             return null;
         }

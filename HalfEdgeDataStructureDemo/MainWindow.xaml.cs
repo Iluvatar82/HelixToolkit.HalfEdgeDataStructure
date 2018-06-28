@@ -57,31 +57,31 @@ namespace HalfEdgeDataStructureDemo
             ///Demo Scene
             var triMesh = HalfEdgeMeshGenerator.GenerateCube(HalfEdgeDataStructure.Vector.Zero, 2, CubeSides.All);
             var bigCube = triMesh.CreateVisual3D(default(Material), default(Material));
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "Big Cube"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh, triMesh.CreateVisual3D(default(Material), default(Material)), "Big Cube"));
 
             triMesh = HalfEdgeMeshGenerator.GenerateCube(new HalfEdgeDataStructure.Vector(1, 1, 2.0005f), .499f, CubeSides.Z | CubeSides.X);
             var cubeVisual3D = triMesh.CreateVisual3D(default(Material), default(Material));
             var cubeBoundaryVisual3D = triMesh.CreateBoundaryVisual3D(default(Color));
             cubeVisual3D.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 15));
             cubeBoundaryVisual3D.Transform = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 15));
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(cubeVisual3D, "Small Open Cube"));
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(cubeBoundaryVisual3D, "Small Open Cube Border"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh, cubeVisual3D, "Small Open Cube"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh, cubeBoundaryVisual3D, "Small Open Cube Border"));
 
             triMesh = HalfEdgeMeshGenerator.GenerateCube(new HalfEdgeDataStructure.Vector(0.5f, 0.5f, 2.5f), 1, CubeSides.All & ~CubeSides.PositiveZ, true);
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed)), default(Material)), "Orange Open Cube"));
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateBoundaryVisual3D(Colors.LightGreen), "Orange Open Cube Border"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh, triMesh.CreateVisual3D(new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed)), default(Material)), "Orange Open Cube"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh, triMesh.CreateBoundaryVisual3D(Colors.LightGreen), "Orange Open Cube Border"));
 
             MeshBuilder mb = new MeshBuilder();
             mb.AddSphere(new Point3D(3, -1, 0.5), 0.5);
             var mg = mb.ToMesh();
             triMesh = HalfEdgeMeshGenerator.GenerateFromMeshGeometry3D(mg, true);
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateVisual3D(default(Material), default(Material)), "HelixToolkit Sphere"));
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh.CreateBoundaryVisual3D(default(Color)), "HelixToolkit Sphere Border"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh, triMesh.CreateVisual3D(default(Material), default(Material)), "HelixToolkit Sphere"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(triMesh, triMesh.CreateBoundaryVisual3D(default(Color)), "HelixToolkit Sphere Border"));
 
             var sphere = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(-2, 1, 1), 1, 4,
                 CubeSides.All & ~CubeSides.PositiveX & ~CubeSides.NegativeY & ~CubeSides.PositiveZ);
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere.CreateVisual3D(default(Material), default(Material)), "Coarse Sphere Part"));
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere.CreateBoundaryVisual3D(default(Color)), "Coarse Sphere Part Border"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere, sphere.CreateVisual3D(default(Material), default(Material)), "Coarse Sphere Part"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere, sphere.CreateBoundaryVisual3D(default(Color)), "Coarse Sphere Part Border"));
 
             var material = MaterialHelper.CreateMaterial(new SolidColorBrush(Colors.LightSkyBlue), 1, 128, 255, false);
             MaterialHelper.ChangeOpacity(material, 0.5);
@@ -97,15 +97,17 @@ namespace HalfEdgeDataStructureDemo
                 removalList[i] = rand.Next(numSphere2Triangles);
             sphere2.RemoveVertices(removalList);
 
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2.CreateVisual3D(material, material), "Fine Transparent Sphere Part"));
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2.CreateBoundaryVisual3D(default(Color)), "Fine Transparent Sphere Part Border"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2, sphere2.CreateVisual3D(material, material), "Fine Transparent Sphere Part"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere2, sphere2.CreateBoundaryVisual3D(default(Color)), "Fine Transparent Sphere Part Border"));
 
             material = MaterialHelper.CreateMaterial(new SolidColorBrush(Colors.LightGoldenrodYellow), 1, 128, 255, false);
             MaterialHelper.ChangeOpacity(material, 0.5);
             var sphere3 = HalfEdgeMeshGenerator.GenerateSphere(new HalfEdgeDataStructure.Vector(2, -0.5f, 0.5f), 0.5f, 16);
-            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere3.CreateVisual3D(material, material), "Transparent Sphere"));
+            ViewModel.AddedSceneElements.Add(new Visual3DViewModel(sphere3, sphere3.CreateVisual3D(material, material), "Transparent Sphere"));
 
             AddSceneElements();
+
+            ///AddSilhoutetteForVisual3D();
         }
 
         /// <summary>
@@ -222,6 +224,37 @@ namespace HalfEdgeDataStructureDemo
         {
             ViewPort.Children.Remove(ViewModel.HoveredElement);
             ViewModel.HoveredElement = null;
+        }
+
+        /// <summary>
+        /// Handle the Change of the Camera.
+        /// </summary>
+        /// <param name="sender">The Sender.</param>
+        /// <param name="e">The RoutedEventArgs.</param>
+        private void ViewPort_CameraChanged(object sender, RoutedEventArgs e)
+        {
+            /*var silhouette = ViewModel.AddedSceneElements.FirstOrDefault(svm => svm.Name == "Silhouette Edges");
+            if(silhouette != default(Visual3DViewModel))
+            {
+                ViewModel.AddedSceneElements.Remove(silhouette);
+                ViewPort.Children.Remove(silhouette.Visual3D);
+            }
+
+            AddSilhoutetteForVisual3D();*/
+        }
+
+        /// <summary>
+        /// Add a Silhouette for a specific Visual3D Object.
+        /// </summary>
+        /// <param name="objectName">The Name of the Visual3D to create and add a Silhouette.</param>
+        private void AddSilhoutetteForVisual3D(string objectName = "HelixToolkit Sphere")
+        {
+            /*var triMesh = ViewModel.AddedSceneElements.First(svm => svm.Name == objectName).Mesh;
+            var triMeshSilhouette = triMesh.CalculateSilhouette(new HalfEdgeDataStructure.Vector(Camera.Position.ToVector())).SelectMany(l => l).ToList();
+            var silhouetteEdges = ExtensionMethods.CreateHalfEdgeVisual(triMeshSilhouette, Colors.Red);
+            var newVisual3DVM = new Visual3DViewModel(triMesh, silhouetteEdges, "Silhouette Edges");
+            ViewModel.AddedSceneElements.Add(newVisual3DVM);
+            ViewPort.Children.Add(newVisual3DVM.Visual3D);*/
         }
     }
 }

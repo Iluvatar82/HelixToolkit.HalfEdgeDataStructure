@@ -51,7 +51,7 @@
                 </Button>
             </ToolBar>
         </ToolBar>-->
-        <helix:HelixViewport3D Grid.Row="2" x:Name="ViewPort" ViewCubeTopText="T" ViewCubeBottomText="Bo" ViewCubeRightText="F" ViewCubeLeftText="Ba" ViewCubeFrontText="R" ViewCubeBackText="L" ShowCoordinateSystem="True" CoordinateSystemHorizontalPosition="Right" RotateAroundMouseDownPoint="True" ZoomAroundMouseDownPoint="True" MouseMove="ViewPort_MouseMove">
+        <helix:HelixViewport3D Grid.Row="2" x:Name="ViewPort" ViewCubeTopText="T" ViewCubeBottomText="Bo" ViewCubeRightText="F" ViewCubeLeftText="Ba" ViewCubeFrontText="R" ViewCubeBackText="L" ShowCoordinateSystem="True" CoordinateSystemHorizontalPosition="Right" RotateAroundMouseDownPoint="True" ZoomAroundMouseDownPoint="True" MouseMove="ViewPort_MouseMove" CameraChanged="ViewPort_CameraChanged">
             <helix:HelixViewport3D.Camera>
                 <PerspectiveCamera x:Name="Camera" Position="-4,-10, 12" LookDirection="3, 8, -8" UpDirection="0, 0, 1" FieldOfView="90"></PerspectiveCamera>
             </helix:HelixViewport3D.Camera>

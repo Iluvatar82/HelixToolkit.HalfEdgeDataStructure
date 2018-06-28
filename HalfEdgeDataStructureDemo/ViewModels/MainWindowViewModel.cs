@@ -91,7 +91,7 @@ namespace HalfEdgeDataStructureDemo.ViewModels
         /// </summary>
         private void SetupStartElements()
         {
-            _startElements.Add(new Visual3DViewModel(new SunLight(), "Sunlight"));
+            _startElements.Add(new Visual3DViewModel(null, new SunLight(), "Sunlight"));
             var floor = new QuadVisual3D()
             {
                 Fill = new SolidColorBrush(Colors.LightGray),
@@ -100,14 +100,14 @@ namespace HalfEdgeDataStructureDemo.ViewModels
                 Point3 = new Point3D(10, 10, -0.001),
                 Point4 = new Point3D(-10, 10, -0.001)
             };
-            _startElements.Add(new Visual3DViewModel(floor, "Floor"));
+            _startElements.Add(new Visual3DViewModel(null, floor, "Floor"));
 
             var gridLines = new GridLinesVisual3D()
             {
                 MinorDistance = 2,
                 Thickness = 0.02,
             };
-            _startElements.Add(new Visual3DViewModel(gridLines, "Grid Lines"));
+            _startElements.Add(new Visual3DViewModel(null, gridLines, "Grid Lines"));
 
             AddAxisInfo(new Vector3D(5, 0, 0), new SolidColorBrush(Colors.Green), new Point3D(5.1, 0, 0), "X");
             AddAxisInfo(new Vector3D(0, 5, 0), new SolidColorBrush(Colors.Blue), new Point3D(0, 5.1, 0), "Y");
@@ -130,7 +130,7 @@ namespace HalfEdgeDataStructureDemo.ViewModels
                 Diameter = 0.05,
                 Fill = brush
             };
-            _startElements.Add(new Visual3DViewModel(asix, $"{text} - Axis"));
+            _startElements.Add(new Visual3DViewModel(null, asix, $"{text} - Axis"));
 
             var axisLabel = new BillboardTextVisual3D()
             {
@@ -139,7 +139,7 @@ namespace HalfEdgeDataStructureDemo.ViewModels
                 Foreground = brush,
                 FontSize = 18
             };
-            _startElements.Add(new Visual3DViewModel(axisLabel, text));
+            _startElements.Add(new Visual3DViewModel(null, axisLabel, text));
         }
     }
 }

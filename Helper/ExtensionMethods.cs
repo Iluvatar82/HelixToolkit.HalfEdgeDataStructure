@@ -125,6 +125,26 @@ namespace Helper
             return lineVisual;
         }
 
+
+
+        public static LinesVisual3D CreateHalfEdgeVisual(List<HalfEdge> halfEdges, Color lineColor, double thickness = 2)
+        {
+            var borderVertices = new Point3DCollection(halfEdges.SelectMany(e => new List<Vertex> { e.StartVertex, e.EndVertex })
+                .Select(v => new Point3D(v.X, v.Y, v.Z)));
+            var lineVisual = new LinesVisual3D
+            {
+                Points = borderVertices,
+                Color = lineColor,
+                Thickness = thickness,
+                DepthOffset = Offset
+            };
+
+            return lineVisual;
+        }
+
+
+
+
         /// <summary>
         /// Create a Ray3D from the Perspective Camera and the X- and Y Values of the MousePosition.
         /// </summary>
@@ -149,6 +169,16 @@ namespace Helper
             ray.Direction = rayDirection;
 
             return ray;
+        }
+
+        /// <summary>
+        /// Convert the Point3D to a HalfEdgeDataStructure Vector.
+        /// </summary>
+        /// <param name="point">The Point3D to convert.</param>
+        /// <returns>The generated Vector.</returns>
+        public static Vector ToVector(this Point3D point)
+        {
+            return new Vector((float)point.X, (float)point.Y, (float)point.Z);
         }
 
         /// <summary>
